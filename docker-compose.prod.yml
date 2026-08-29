@@ -1,9 +1,21 @@
+# Compose de produccion para Dokploy.
+#
+# Tres diferencias con el de desarrollo, y las tres son obligatorias:
+#
+#  1. Sin `ports:` publicados. Quien escucha en el 80/443 del servidor es
+#     Traefik; si un servicio publica el 80 tambien, chocan y el despliegue
+#     falla. Traefik llega a los contenedores por la red interna.
+#  2. `web` y `api` estan en `dokploy-network`. Es como Traefik los encuentra
+#     para enrutar los dominios. Sin esto, "Services not found".
+#  3. `db` NO esta en esa red: no necesita dominio ni exposicion externa.
+
 services:
   db:
     image: postgres:17-alpine
+    restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?define POSTGRES_PASSWORD en .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?falta POSTGRES_PASSWORD}
       POSTGRES_DB: cartas_production
     volumes:
       - pgdata:/var/lib/postgresql/data
@@ -17,29 +29,42 @@ services:
     build:
       context: ./api
       target: prod
+    restart: unless-stopped
     depends_on:
       db:
         condition: service_healthy
     environment:
       RAILS_ENV: production
       DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD}@db:5432/cartas_production
-      SECRET_KEY_BASE: ${SECRET_KEY_BASE:?define SECRET_KEY_BASE en .env}
-      WEB_ORIGIN: ${WEB_ORIGIN:-http://localhost}
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE:?falta SECRET_KEY_BASE}
+      # Debe coincidir EXACTO con el dominio del front, protocolo incluido,
+      # o la API rechazara sus peticiones por CORS.
+      WEB_ORIGIN: ${WEB_ORIGIN:?falta WEB_ORIGIN}
       RAILS_LOG_TO_STDOUT: "true"
+    # Migra antes de servir: cada despliegue deja el esquema al dia solo.
     command: sh -c "bin/rails db:prepare && bin/rails server -b 0.0.0.0 -p 3000"
-    ports:
-      - "3000:3000"
+    networks:
+      - default
+      - dokploy-network
 
   web:
     build:
       context: ./web
       target: prod
       args:
-        VITE_API_URL: ${VITE_API_URL:-http://localhost:3000/api}
+        # Vite incrusta esto en el bundle AL CONSTRUIR. Si cambia el dominio
+        # de la API hay que reconstruir, no basta con reiniciar.
+        VITE_API_URL: ${VITE_API_URL:?falta VITE_API_URL}
+    restart: unless-stopped
     depends_on:
       - api
-    ports:
-      - "80:80"
+    networks:
+      - default
+      - dokploy-network
 
 volumes:
   pgdata:
+
+networks:
+  dokploy-network:
+    external: true
