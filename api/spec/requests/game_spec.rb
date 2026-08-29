@@ -74,6 +74,17 @@ RSpec.describe "Game" do
     expect(json[:pairing][:current_turn_user_id]).to eq(bea.id)
   end
 
+  it "una carta robada antes de registrar quien robaba no rompe last_play" do
+    llenar_mazo(1)
+    Card.first.update!(drawn_at: Time.current, drawn_by_id: nil)
+
+    get "/api/pairing", headers: auth_headers(ana)
+
+    expect(response).to have_http_status(:ok)
+    expect(json[:last_play][:drawn_by]).to be_nil
+    expect(json[:last_play][:card][:title]).to eq("C0")
+  end
+
   it "sin jugadas todavia, last_play es nulo" do
     llenar_mazo(1)
 

@@ -145,6 +145,34 @@ describe('mesa de juego', () => {
     expect(screen.getByText('Canta el estribillo')).toBeInTheDocument()
   })
 
+  it('muestra la última jugada aunque no se sepa quién robó', async () => {
+    // Las cartas robadas antes de que existiera `drawn_by` no tienen a quién
+    // atribuirse. Antes esto tumbaba la pantalla entera.
+    servidor(
+      mesa({
+        last_play: {
+          card: {
+            id: 9,
+            title: 'Prenda',
+            challenge: 'Quítate una prenda',
+            difficulty: 'dificil',
+            mine: true,
+            drawn: true,
+            hidden: false,
+            created_at: '2026-08-29T00:00:00Z',
+          },
+          drawn_by: null,
+          drawn_by_me: false,
+          drawn_at: '2026-08-29T10:00:00Z',
+        },
+      }),
+    )
+    pintar()
+
+    expect(await screen.findByText(/Salió/)).toBeInTheDocument()
+    expect(screen.getByText('Quítate una prenda')).toBeInTheDocument()
+  })
+
   it('avisa en el título de la pestaña cuando pasa a ser tu turno', async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true })
 

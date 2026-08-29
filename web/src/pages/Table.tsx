@@ -219,7 +219,13 @@ function CartaRevelada({ carta }: { carta: Card }) {
 
 /** Lo que le tocó a la otra persona, sin tener que preguntárselo. */
 function UltimaJugada({ jugada }: { jugada: LastPlay }) {
-  const quien = jugada.drawn_by_me ? 'Te tocó' : `Le tocó a ${jugada.drawn_by.display_name}`
+  // `drawn_by` puede ser null: las cartas robadas antes de que existiera ese
+  // dato no tienen a quién atribuirse. Se enseña la carta igual, sin nombre.
+  const quien = jugada.drawn_by_me
+    ? 'Te tocó'
+    : jugada.drawn_by
+      ? `Le tocó a ${jugada.drawn_by.display_name}`
+      : 'Salió'
 
   return (
     <motion.section

@@ -1,6 +1,7 @@
 import { BrowserRouter, Link, NavLink, Navigate, Outlet, Route, Routes } from 'react-router-dom'
 import { AuthProvider, useAuth } from './auth/AuthContext'
 import { RequireAnon, RequireNoPairing, RequirePairing } from './auth/guards'
+import { ErrorBoundary } from './components/ErrorBoundary'
 import { IconoSalir } from './components/Icon'
 import { AuthPage } from './pages/Login'
 import { Cards } from './pages/Cards'
@@ -53,27 +54,29 @@ function Layout() {
 export default function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <Routes>
-          <Route element={<RequireAnon />}>
-            <Route path="/login" element={<AuthPage modo="login" />} />
-            <Route path="/signup" element={<AuthPage modo="signup" />} />
-          </Route>
-
-          <Route element={<RequireNoPairing />}>
-            <Route path="/pair" element={<Pair />} />
-          </Route>
-
-          <Route element={<RequirePairing />}>
-            <Route element={<Layout />}>
-              <Route path="/" element={<Table />} />
-              <Route path="/cards" element={<Cards />} />
+      <ErrorBoundary>
+        <AuthProvider>
+          <Routes>
+            <Route element={<RequireAnon />}>
+              <Route path="/login" element={<AuthPage modo="login" />} />
+              <Route path="/signup" element={<AuthPage modo="signup" />} />
             </Route>
-          </Route>
 
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </AuthProvider>
+            <Route element={<RequireNoPairing />}>
+              <Route path="/pair" element={<Pair />} />
+            </Route>
+
+            <Route element={<RequirePairing />}>
+              <Route element={<Layout />}>
+                <Route path="/" element={<Table />} />
+                <Route path="/cards" element={<Cards />} />
+              </Route>
+            </Route>
+
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </AuthProvider>
+      </ErrorBoundary>
     </BrowserRouter>
   )
 }

@@ -48,7 +48,8 @@ export interface Session {
 
 export interface LastPlay {
   card: Card
-  drawn_by: Partner
+  /** null en cartas robadas antes de que se registrara quien robaba */
+  drawn_by: Partner | null
   /** true si la robaste tu; false si la robo la otra persona */
   drawn_by_me: boolean
   drawn_at: string
