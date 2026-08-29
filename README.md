@@ -87,3 +87,44 @@ estáticos y lo sirve nginx en el puerto 80.
 
 `VITE_API_URL` se incrusta en el bundle **en tiempo de build**: si despliegas la
 API en otro dominio, pásalo al construir, no al arrancar.
+
+## Problemas conocidos
+
+### `password authentication failed for user "postgres"`
+
+Postgres fija `POSTGRES_PASSWORD` **solo al crear el volumen**. Si el volumen
+ya existía con otra contraseña, cambiar la variable no sirve de nada: la API
+seguirá siendo rechazada.
+
+Con datos que quieras conservar, cambia la contraseña del usuario en vez de
+borrar el volumen:
+
+```bash
+docker exec <contenedor-db> \
+  psql -U postgres -c "ALTER USER postgres PASSWORD 'LA-DE-TU-ENV'"
+```
+
+Si la base está vacía, borrar el volumen y redesplegar es equivalente:
+
+```bash
+docker compose -p <proyecto> -f docker-compose.prod.yml down -v
+```
+
+Para ver qué contraseña está usando realmente la API:
+
+```bash
+docker exec <contenedor-api> env | grep DATABASE_URL
+```
+
+### El deploy publica puertos y choca con Traefik
+
+Señal: `Bind for 0.0.0.0:3000 failed: port is already allocated`.
+
+Es que se está desplegando `docker-compose.yml`, el de desarrollo. El path
+del compose debe ser `docker-compose.prod.yml`.
+
+### `bin/rails: Permission denied` en el servidor
+
+El bit de ejecución de `api/bin/*` se perdió al commitear desde Windows. Se
+arregla con `git update-index --chmod=+x api/bin/*`; el Dockerfile además
+hace `chmod +x bin/*` por si vuelve a pasar.
