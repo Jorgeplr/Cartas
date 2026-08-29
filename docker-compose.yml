@@ -1,0 +1,53 @@
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: cartas_development
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  api:
+    build:
+      context: ./api
+      target: dev
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      RAILS_ENV: development
+      DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD:-postgres}@db:5432/cartas_development
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE:-desarrollo_local_no_usar_en_produccion_0123456789abcdef}
+      WEB_ORIGIN: http://localhost:5173
+    volumes:
+      - ./api:/app
+      - bundle_cache:/usr/local/bundle
+    ports:
+      - "3000:3000"
+
+  web:
+    build:
+      context: ./web
+      target: dev
+    depends_on:
+      - api
+    environment:
+      VITE_API_URL: http://localhost:3000/api
+    volumes:
+      - ./web:/app
+      - web_modules:/app/node_modules
+    ports:
+      - "5173:5173"
+
+volumes:
+  pgdata:
+  bundle_cache:
+  web_modules:

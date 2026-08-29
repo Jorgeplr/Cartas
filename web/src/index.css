@@ -1,0 +1,94 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  /* Base oscura: violeta-negro profundo, tomada de la paleta gaming validada */
+  --color-noche: #0d0b1a;
+  --color-superficie: #1a1730;
+  --color-superficie-alta: #241f3d;
+  --color-borde: #38315c;
+
+  /* Marca: fucsia neon + lima. Ambos llevan texto casi negro encima,
+     lo que da contraste muy por encima de 4.5:1 sin perder el brillo. */
+  --color-fucsia: #ff2d9b;
+  --color-fucsia-oscuro: #c4187a;
+  --color-lima: #c8ff3d;
+  --color-violeta: #7c3aed;
+
+  /* Texto */
+  --color-tinta: #f2eeff;
+  --color-tinta-suave: #a79fc4;
+
+  /* Dificultad: cada nivel tiene color propio, pero SIEMPRE va acompanado
+     de su etiqueta de texto (nunca solo color). */
+  --color-facil: #c8ff3d;
+  --color-medio: #ffb020;
+  --color-dificil: #ff2d6b;
+
+  --color-error: #ff5a5a;
+
+  --font-display: 'Fredoka', system-ui, sans-serif;
+  --font-sans: 'Nunito', system-ui, sans-serif;
+
+  --radius-carta: 1.25rem;
+
+  --shadow-neon: 0 0 0 1px rgba(255, 45, 155, 0.4), 0 0 28px -6px rgba(255, 45, 155, 0.55);
+  --shadow-lima: 0 0 0 1px rgba(200, 255, 61, 0.4), 0 0 28px -6px rgba(200, 255, 61, 0.5);
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% -10%, rgba(124, 58, 237, 0.28), transparent 70%),
+      radial-gradient(ellipse 60% 50% at 90% 100%, rgba(255, 45, 155, 0.16), transparent 70%),
+      var(--color-noche);
+    background-attachment: fixed;
+    color: var(--color-tinta);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    line-height: 1.15;
+  }
+
+  /* Foco visible siempre: nunca quitamos el anillo, lo hacemos bonito. */
+  :focus-visible {
+    outline: 3px solid var(--color-lima);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+@layer utilities {
+  .cara-carta {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+}
+
+/* Quien pide menos movimiento recibe la misma informacion, sin el viaje. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

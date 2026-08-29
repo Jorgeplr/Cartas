@@ -6,3 +6,6 @@ api/tmp/
 api/log/
 web/node_modules/
 web/dist/
+.uiux/
+.env
+api/config/master.key
