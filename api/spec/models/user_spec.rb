@@ -1,9 +1,14 @@
 require "rails_helper"
 
 RSpec.describe User do
-  it "genera un codigo de invitacion de 6 caracteres sin ambiguos" do
-    user = crear_usuario("a@b.com")
-    expect(user.invite_code).to match(/\A[A-Z2-9]{6}\z/)
+  it "genera codigos de 6 caracteres sin ninguno ambiguo" do
+    codigos = Array.new(25) { |i| crear_usuario("u#{i}@x.com").invite_code }
+
+    codigos.each do |codigo|
+      expect(codigo).to match(/\A[A-Z2-9]{6}\z/)
+      # Ni 0/1 (fuera del alfabeto) ni las letras que se confunden con ellos.
+      expect(codigo).not_to match(/[OI]/)
+    end
   end
 
   it "deriva el nombre visible del email" do

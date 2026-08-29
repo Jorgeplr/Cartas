@@ -3,8 +3,10 @@ class User < ApplicationRecord
 
   has_many :cards, foreign_key: :author_id, dependent: :destroy, inverse_of: :author
 
-  # Sin 0/O/1/I: un codigo que se dicta en voz alta no puede ser ambiguo.
-  ALFABETO = (("A".."Z").to_a + ("2".."9").to_a).freeze
+  # Un codigo que se dicta en voz alta no puede ser ambiguo: fuera los digitos
+  # 0 y 1, y fuera tambien las letras O e I que se confunden con ellos.
+  AMBIGUOS = %w[O I].freeze
+  ALFABETO = (("A".."Z").to_a - AMBIGUOS + ("2".."9").to_a).freeze
 
   validates :email, presence: true, uniqueness: true,
                     format: { with: URI::MailTo::EMAIL_REGEXP }

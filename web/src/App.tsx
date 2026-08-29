@@ -1,6 +1,6 @@
 import { BrowserRouter, Link, NavLink, Navigate, Outlet, Route, Routes } from 'react-router-dom'
 import { AuthProvider, useAuth } from './auth/AuthContext'
-import { RequireAnon, RequireAuth, RequirePairing } from './auth/guards'
+import { RequireAnon, RequireNoPairing, RequirePairing } from './auth/guards'
 import { IconoSalir } from './components/Icon'
 import { AuthPage } from './pages/Login'
 import { Cards } from './pages/Cards'
@@ -60,7 +60,7 @@ export default function App() {
             <Route path="/signup" element={<AuthPage modo="signup" />} />
           </Route>
 
-          <Route element={<RequireAuth />}>
+          <Route element={<RequireNoPairing />}>
             <Route path="/pair" element={<Pair />} />
           </Route>
 

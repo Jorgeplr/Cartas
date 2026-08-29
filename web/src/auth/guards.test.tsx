@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { AuthProvider } from './AuthContext'
-import { RequireAnon, RequireAuth, RequirePairing } from './guards'
+import { RequireAnon, RequireNoPairing, RequirePairing } from './guards'
 import { setToken } from '../lib/api'
 import type { Session } from '../lib/types'
 
@@ -36,7 +36,7 @@ function pintar(session: Session | null) {
           <Route element={<RequirePairing />}>
             <Route path="/" element={<div>mesa</div>} />
           </Route>
-          <Route element={<RequireAuth />}>
+          <Route element={<RequireNoPairing />}>
             <Route path="/pair" element={<div>emparejar</div>} />
           </Route>
           <Route element={<RequireAnon />}>
@@ -67,6 +67,35 @@ describe('guards de rutas', () => {
     })
 
     expect(await screen.findByText('mesa')).toBeInTheDocument()
+  })
+
+  it('saca de emparejar a quien ya tiene pareja', async () => {
+    setToken('token-valido')
+    simularMe({
+      user: USUARIO,
+      pairing: { id: 1, current_turn_user_id: 1 },
+      partner: { id: 2, display_name: 'bea' },
+    })
+
+    // Entrando directamente por /pair: es donde se queda el usuario justo
+    // después de emparejarse, y sin este guard el botón gira para siempre.
+    render(
+      <MemoryRouter initialEntries={['/pair']}>
+        <AuthProvider>
+          <Routes>
+            <Route element={<RequireNoPairing />}>
+              <Route path="/pair" element={<div>emparejar</div>} />
+            </Route>
+            <Route element={<RequirePairing />}>
+              <Route path="/" element={<div>mesa</div>} />
+            </Route>
+          </Routes>
+        </AuthProvider>
+      </MemoryRouter>,
+    )
+
+    expect(await screen.findByText('mesa')).toBeInTheDocument()
+    expect(screen.queryByText('emparejar')).not.toBeInTheDocument()
   })
 
   it('no redirige mientras la sesión aún se está resolviendo', async () => {
