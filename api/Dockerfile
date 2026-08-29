@@ -11,6 +11,10 @@ RUN bundle install
 
 COPY . .
 
+# Git no siempre conserva el bit de ejecucion cuando se commitea desde
+# Windows, y entonces bin/rails llega al servidor como "Permission denied".
+RUN chmod +x bin/*
+
 
 FROM base AS dev
 ENV RAILS_ENV=development
