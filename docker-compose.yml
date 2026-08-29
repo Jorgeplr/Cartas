@@ -38,7 +38,9 @@ services:
     # Prepara la base antes de servir: `docker compose up` deja el esquema al
     # dia sin pasos manuales, y evita el fallo silencioso de un Rails que
     # arranca con el esquema viejo cacheado tras una migracion.
-    command: sh -c "bin/rails db:prepare && bin/rails server -b 0.0.0.0 -p 3000"
+    # El pid sobrevive al reinicio porque ./api es un volumen montado, y
+    # Rails se niega a arrancar creyendo que ya hay un servidor vivo.
+    command: sh -c "rm -f tmp/pids/server.pid && bin/rails db:prepare && bin/rails server -b 0.0.0.0 -p 3000"
     volumes:
       - ./api:/app
       - bundle_cache:/usr/local/bundle
