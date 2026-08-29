@@ -1,0 +1,8 @@
+node_modules/
+tmp/
+log/
+.env
+api/tmp/
+api/log/
+web/node_modules/
+web/dist/
