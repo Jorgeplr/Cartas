@@ -53,6 +53,35 @@ RSpec.describe "Game" do
     expect(pairing.reload.current_turn_user_id).to eq(ana.id)
   end
 
+  it "registra quien robo la carta" do
+    llenar_mazo(1)
+
+    post "/api/draw", headers: auth_headers(ana)
+
+    expect(Card.first.drawn_by_id).to eq(ana.id)
+  end
+
+  it "la otra persona ve la ultima jugada sin haber robado ella" do
+    llenar_mazo(2)
+    post "/api/draw", headers: auth_headers(ana)
+
+    get "/api/pairing", headers: auth_headers(bea)
+
+    expect(json[:last_play][:drawn_by][:display_name]).to eq("ana")
+    expect(json[:last_play][:drawn_by_me]).to be(false)
+    # El reto de una carta ya jugada se revela a ambos: es lo que hay que cumplir.
+    expect(json[:last_play][:card][:challenge]).to be_present
+    expect(json[:pairing][:current_turn_user_id]).to eq(bea.id)
+  end
+
+  it "sin jugadas todavia, last_play es nulo" do
+    llenar_mazo(1)
+
+    get "/api/pairing", headers: auth_headers(ana)
+
+    expect(json[:last_play]).to be_nil
+  end
+
   it "rebarajar devuelve todas las cartas al mazo" do
     llenar_mazo(3)
     Card.update_all(drawn_at: Time.current)
@@ -61,5 +90,6 @@ RSpec.describe "Game" do
 
     expect(json[:cards_left]).to eq(3)
     expect(Card.where.not(drawn_at: nil)).to be_empty
+    expect(Card.where.not(drawn_by_id: nil)).to be_empty
   end
 end

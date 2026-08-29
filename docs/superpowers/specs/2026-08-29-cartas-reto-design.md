@@ -22,7 +22,9 @@ Dentro:
 Fuera (YAGNI):
 
 - Recuperación de contraseña, confirmación de email, OAuth.
-- Historial de jugadas, marcador, estados cumplida/rechazada.
+- Marcador, estados cumplida/rechazada, historial completo de partidas.
+  (Sí se guarda la ultima jugada: sin ella la otra persona no se entera
+  de que ha salido una carta.)
 - Más de una pareja por usuario, o barajas múltiples.
 - Notificaciones push, tiempo real (websockets), imágenes en cartas.
 

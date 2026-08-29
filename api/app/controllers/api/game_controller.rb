@@ -14,7 +14,7 @@ module Api
         card = current_pairing.cards.in_deck.order(Arel.sql("RANDOM()")).lock.first
         next unless card
 
-        card.update!(drawn_at: Time.current)
+        card.update!(drawn_at: Time.current, drawn_by: current_user)
         current_pairing.update!(current_turn_user: current_pairing.other_than(current_user))
       end
 
@@ -31,7 +31,7 @@ module Api
     end
 
     def reshuffle
-      current_pairing.cards.update_all(drawn_at: nil)
+      current_pairing.cards.update_all(drawn_at: nil, drawn_by_id: nil)
       render json: { cards_left: current_pairing.cards.count }
     end
   end

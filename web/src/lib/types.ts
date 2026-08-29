@@ -46,11 +46,21 @@ export interface Session {
   partner: Partner | null
 }
 
+export interface LastPlay {
+  card: Card
+  drawn_by: Partner
+  /** true si la robaste tu; false si la robo la otra persona */
+  drawn_by_me: boolean
+  drawn_at: string
+}
+
 export interface DeckState {
   pairing: Pairing
   partner: Partner
   cards_left: number
   cards_total: number
+  /** null hasta que sale la primera carta, y tras rebarajar */
+  last_play: LastPlay | null
 }
 
 export interface DrawResult {
