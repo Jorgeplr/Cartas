@@ -19,11 +19,8 @@ docker compose up
 - Web: <http://localhost:5173>
 - API: <http://localhost:3000>
 
-La primera vez, prepara la base de datos:
-
-```bash
-docker compose exec api bin/rails db:prepare
-```
+El contenedor `api` prepara la base al arrancar, asi que las migraciones se
+aplican solas con cada `docker compose up`. No hay paso manual.
 
 ## Cómo se juega
 
