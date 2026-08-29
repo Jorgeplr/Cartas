@@ -37,6 +37,11 @@ export function useDeckSync() {
   }, [])
 
   useEffect(() => {
+    // La regla asume que el estado cambia de forma sincrona, pero aqui se
+    // actualiza despues del await del fetch. Pedir datos a la API al montar
+    // es sincronizar con un sistema externo, que es justo para lo que sirve
+    // un efecto.
+    // oxlint-disable-next-line react/set-state-in-effect
     void sincronizar()
 
     const tick = () => {

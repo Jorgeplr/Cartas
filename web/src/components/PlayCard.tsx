@@ -2,8 +2,6 @@ import type { Difficulty } from '../lib/types'
 import { ETIQUETA_DIFICULTAD } from '../lib/types'
 import { IconoCandado, IconoDificultad } from './Icon'
 
-/** Un color por dificultad, pero el nivel SIEMPRE lleva también su etiqueta:
- *  nadie debe depender del color para entender la carta. */
 interface EstiloDificultad {
   borde: string
   texto: string
@@ -11,8 +9,11 @@ interface EstiloDificultad {
   glow: string
 }
 
-// Las clases van escritas enteras: Tailwind escanea el código fuente, así que
-// una clase construida en runtime (`'text-' + nivel`) nunca llega al CSS.
+// Un color por dificultad, pero el nivel SIEMPRE lleva tambien su etiqueta:
+// nadie debe depender del color para entender la carta.
+//
+// Las clases van escritas enteras porque Tailwind escanea el codigo fuente:
+// una clase construida en runtime (`"text-" + nivel`) nunca llega al CSS.
 const ESTILO: Record<Difficulty, EstiloDificultad> = {
   facil: {
     borde: 'border-facil/70',
@@ -69,7 +70,7 @@ export function PlayCard({
 
   return (
     <article
-      className={`relative flex aspect-[2/3] w-full flex-col justify-between overflow-hidden rounded-carta border-2 ${estilo.borde} bg-superficie p-5 ${estilo.glow} ${drawn ? 'opacity-55' : ''} ${className}`}
+      className={`relative flex aspect-2/3 w-full flex-col justify-between overflow-hidden rounded-carta border-2 ${estilo.borde} bg-superficie p-5 ${estilo.glow} ${drawn ? 'opacity-55' : ''} ${className}`}
     >
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(255,255,255,0.07),transparent_60%)]" />
 
@@ -121,7 +122,7 @@ export function PlayCard({
 export function CardBack({ className = '' }: { className?: string }) {
   return (
     <div
-      className={`relative aspect-[2/3] w-full overflow-hidden rounded-carta border-2 border-fucsia/40 bg-superficie-alta shadow-neon ${className}`}
+      className={`relative aspect-2/3 w-full overflow-hidden rounded-carta border-2 border-fucsia/40 bg-superficie-alta shadow-neon ${className}`}
     >
       <div
         className="absolute inset-0 opacity-25"
