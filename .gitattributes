@@ -1,0 +1,12 @@
+# Este proyecto se desarrolla en Windows y se ejecuta en Linux.
+# Los scripts deben llegar al contenedor con finales de linea LF: un CR en
+# la primera linea convierte "#!/usr/bin/env ruby" en un interprete que no
+# existe, y el servicio no arranca.
+* text=auto eol=lf
+
+api/bin/*   text eol=lf
+*.sh        text eol=lf
+Dockerfile  text eol=lf
+
+*.png binary
+*.svg text eol=lf
