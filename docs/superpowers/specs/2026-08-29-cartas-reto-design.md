@@ -74,14 +74,16 @@ emparejamiento.
 | Columna      | Tipo     | Notas                                 |
 |--------------|----------|---------------------------------------|
 | `id`         | bigint   | PK                                    |
-| `pairing_id` | bigint   | FK pairings, índice                   |
 | `author_id`  | bigint   | FK users                              |
 | `title`      | string   | no nulo, máx 60                       |
 | `challenge`  | text     | no nulo, máx 280                      |
 | `difficulty` | string   | enum: `facil` / `medio` / `dificil`   |
 | `drawn_at`   | datetime | nulo = sigue en el mazo               |
 
-**La pareja es la baraja.** No hay tabla `decks`. **No hay historial de
+**Una carta pertenece a quien la escribió, no a la pareja.** Así se puede
+llenar el mazo antes de tener con quien jugar, y al emparejarse las cartas ya
+escritas entran solas a la baraja. La baraja de una pareja son las cartas de
+sus dos miembros: no hay tabla `decks`. **No hay historial de
 jugadas**: `drawn_at` marca la carta como gastada y rebarajar lo pone a `NULL`
 en toda la baraja.
 
@@ -166,7 +168,7 @@ Stack: Vite + React 19 + TypeScript + Tailwind + Framer Motion + React Router.
 |-----------|-------------------------|----------------------------------------------|
 | `/login`  | solo anónimos           | email + contraseña                           |
 | `/signup` | solo anónimos           | email + contraseña                           |
-| `/pair`   | autenticado, sin pareja | tu código en grande + input para el del otro |
+| `/pair`   | autenticado, sin pareja | código, emparejar y panel de escritura        |
 | `/`       | autenticado, con pareja | mesa de juego                                |
 | `/cards`  | autenticado, con pareja | tus cartas + editor                          |
 

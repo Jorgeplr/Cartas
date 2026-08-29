@@ -6,7 +6,7 @@ RSpec.describe "Cards" do
   let!(:pairing) { Pairing.create!(user_a: ana, user_b: bea, current_turn_user: ana) }
 
   def carta(author:, **attrs)
-    Card.create!({ pairing: pairing, author: author, title: "T", challenge: "C",
+    Card.create!({ author: author, title: "T", challenge: "C",
                    difficulty: "medio" }.merge(attrs))
   end
 
@@ -15,7 +15,7 @@ RSpec.describe "Cards" do
          headers: auth_headers(ana)
 
     expect(response).to have_http_status(:created)
-    expect(Card.last.pairing_id).to eq(pairing.id)
+    expect(Card.last.author_id).to eq(ana.id)
     expect(Card.last.author_id).to eq(ana.id)
   end
 
@@ -70,12 +70,23 @@ RSpec.describe "Cards" do
     expect(Card.exists?(mia.id)).to be(false)
   end
 
-  it "exige tener pareja para crear cartas" do
+  it "permite escribir cartas antes de tener pareja" do
     sola = crear_usuario("sola@x.com")
 
-    post "/api/cards", params: { title: "T", challenge: "C", difficulty: "facil" },
+    post "/api/cards", params: { title: "Adelantada", challenge: "C", difficulty: "facil" },
          headers: auth_headers(sola)
 
-    expect(json[:error][:code]).to eq("no_pairing")
+    expect(response).to have_http_status(:created)
+    expect(sola.cards.count).to eq(1)
+  end
+
+  it "sin pareja solo ves tus propias cartas" do
+    sola = crear_usuario("sola@x.com")
+    Card.create!(author: sola, title: "Mia", challenge: "C", difficulty: "facil")
+
+    get "/api/cards", headers: auth_headers(sola)
+
+    expect(json[:cards].size).to eq(1)
+    expect(json[:cards].first[:title]).to eq("Mia")
   end
 end

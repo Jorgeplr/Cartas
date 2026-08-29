@@ -1,14 +1,13 @@
 module Api
   class CardsController < ApplicationController
-    include RequiresPairing
-
+    # A proposito NO exige pareja: se puede ir llenando el mazo mientras
+    # esperas a que la otra persona se una.
     def index
-      cards = current_pairing.cards.order(created_at: :desc)
-      render json: { cards: CardSerializer.collection(cards, current_user) }
+      render json: { cards: CardSerializer.collection(mazo.order(created_at: :desc), current_user) }
     end
 
     def create
-      card = current_pairing.cards.create!(card_params.merge(author: current_user))
+      card = current_user.cards.create!(card_params)
       render json: { card: CardSerializer.call(card, current_user) }, status: :created
     end
 
@@ -25,8 +24,13 @@ module Api
 
     private
 
+    # Sin pareja solo existen tus cartas; con pareja, la baraja de ambos.
+    def mazo
+      current_user.pairing&.cards || current_user.cards
+    end
+
     def editable_card
-      card = current_pairing.cards.find(params[:id])
+      card = mazo.find(params[:id])
 
       raise Forbidden, "not_your_card" unless card.author_id == current_user.id
       # Una carta ya robada es historia: no se reescribe lo que la otra

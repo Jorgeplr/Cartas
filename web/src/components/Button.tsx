@@ -17,6 +17,11 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode
 }
 
+/**
+ * Deshabilitado se pinta en gris, no en la marca al 45%: un fucsia o un lima
+ * translúcidos sobre fondo oscuro se leen como color roto, no como "todavía
+ * no disponible".
+ */
 export function Button({
   variante = 'primario',
   cargando = false,
@@ -32,7 +37,7 @@ export function Button({
       {...props}
       disabled={inactivo}
       aria-busy={cargando || undefined}
-      className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-5 font-display text-base font-semibold transition-[background-color,border-color,transform,opacity] duration-200 ease-out active:scale-[0.97] disabled:pointer-events-none disabled:opacity-45 ${VARIANTES[variante]} ${className}`}
+      className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-5 font-display text-base font-semibold transition-[background-color,border-color,transform,color] duration-200 ease-out active:scale-[0.97] disabled:pointer-events-none disabled:border disabled:border-borde disabled:bg-superficie-alta disabled:text-tinta-suave/70 disabled:shadow-none ${VARIANTES[variante]} ${className}`}
     >
       {cargando && (
         <span

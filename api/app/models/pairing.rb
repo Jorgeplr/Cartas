@@ -3,10 +3,13 @@ class Pairing < ApplicationRecord
   belongs_to :user_b, class_name: "User"
   belongs_to :current_turn_user, class_name: "User"
 
-  has_many :cards, dependent: :destroy
-
   def members
     [user_a, user_b]
+  end
+
+  # La baraja son las cartas de ambos: no hay tabla de mazos, la pareja lo es.
+  def cards
+    Card.where(author_id: [user_a_id, user_b_id])
   end
 
   def other_than(user)

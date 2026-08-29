@@ -20,6 +20,16 @@ RSpec.describe "Pairings" do
     expect(response).to have_http_status(:created)
   end
 
+  it "las cartas escritas antes de emparejarse entran solas a la baraja" do
+    Card.create!(author: ana, title: "Adelantada", challenge: "Reto previo", difficulty: "medio")
+    Card.create!(author: bea, title: "La suya", challenge: "Otro reto", difficulty: "facil")
+
+    post "/api/pairing/join", params: { code: ana.invite_code }, headers: auth_headers(bea)
+
+    expect(json[:cards_total]).to eq(2)
+    expect(json[:cards_left]).to eq(2)
+  end
+
   it "rechaza tu propio codigo" do
     post "/api/pairing/join", params: { code: ana.invite_code }, headers: auth_headers(ana)
 
