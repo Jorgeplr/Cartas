@@ -81,7 +81,10 @@ export function Cards() {
         </p>
       ) : (
         <div className="flex flex-col gap-10">
-          <Seccion titulo={`Tus cartas ()`} extra={<ResumenDificultad cards={mias} />}>
+          <Seccion
+            titulo={`Tus cartas (${mias.length})`}
+            extra={<ResumenDificultad cards={mias} />}
+          >
             {mias.length === 0 ? (
               <EmptyDeck
                 mensaje="Todavía no has escrito ninguna. La primera marca el tono de la partida."

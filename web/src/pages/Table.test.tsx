@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { act, render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { AuthProvider } from '../auth/AuthContext'
 import { setToken } from '../lib/api'
@@ -32,11 +33,12 @@ function json(body: unknown, status = 200) {
 /** Un servidor cuyo estado de mesa se puede cambiar entre sondeos, que es
  *  justo lo que pasa cuando la otra persona roba. */
 function servidor(inicial: DeckState) {
-  const estado = { mesa: inicial }
+  const estado = { mesa: inicial, llamadas: [] as [string, RequestInit | undefined][] }
 
   vi.stubGlobal(
     'fetch',
-    vi.fn(async (url: string) => {
+    vi.fn(async (url: string, init?: RequestInit) => {
+      estado.llamadas.push([url, init])
       if (url.endsWith('/me')) return json(SESION)
       if (url.endsWith('/pairing')) return json(estado.mesa)
       return json({})
@@ -191,6 +193,45 @@ describe('mesa de juego', () => {
     await waitFor(() => expect(document.title).toBe('¡Te toca! · Cartas de Reto'))
 
     vi.useRealTimers()
+  })
+
+  it('deja reiniciar el mazo a media partida', async () => {
+    // 4 en total, 2 sin robar: hay cartas jugadas que devolver.
+    const estado = servidor(mesa({ cards_left: 2, cards_total: 4 }))
+    vi.spyOn(window, 'confirm').mockReturnValue(true)
+    pintar()
+
+    const reiniciar = await screen.findByRole('button', { name: /reiniciar mazo/i })
+    await userEvent.click(reiniciar)
+
+    // Confirma antes, porque la otra persona tambien se ve afectada.
+    expect(window.confirm).toHaveBeenCalled()
+    await waitFor(() => {
+      const llamada = estado.llamadas.find(
+        ([url, init]) => url.endsWith('/deck/reshuffle') && init?.method === 'POST',
+      )
+      expect(llamada).toBeDefined()
+    })
+  })
+
+  it('no reinicia si cancelas la confirmación', async () => {
+    const estado = servidor(mesa({ cards_left: 2, cards_total: 4 }))
+    vi.spyOn(window, 'confirm').mockReturnValue(false)
+    pintar()
+
+    await userEvent.click(await screen.findByRole('button', { name: /reiniciar mazo/i }))
+
+    expect(
+      estado.llamadas.find(([url]) => url.endsWith('/deck/reshuffle')),
+    ).toBeUndefined()
+  })
+
+  it('no ofrece reiniciar si aún no ha salido ninguna carta', async () => {
+    servidor(mesa({ cards_left: 4, cards_total: 4 }))
+    pintar()
+
+    await screen.findByRole('button', { name: 'ROBAR' })
+    expect(screen.queryByRole('button', { name: /reiniciar mazo/i })).not.toBeInTheDocument()
   })
 
   it('ofrece rebarajar con el mazo agotado', async () => {

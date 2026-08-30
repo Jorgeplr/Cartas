@@ -27,6 +27,8 @@ export function Table() {
   const miTurno = deck != null && miId != null && deck.pairing.current_turn_user_id === miId
   const quedan = deck?.cards_left ?? 0
   const total = deck?.cards_total ?? 0
+  /** Cartas ya salidas: si no hay ninguna, no hay nada que reiniciar. */
+  const jugadas = total - quedan
   const nombrePareja = deck?.partner.display_name ?? 'tu pareja'
 
   // Mientras miras una carta recién robada no queremos que la última jugada
@@ -58,7 +60,19 @@ export function Table() {
     }
   }
 
+  /**
+   * Devuelve todas las cartas jugadas al mazo. A media partida se confirma
+   * primero: afecta también a la otra persona, que vería desaparecer su última
+   * carta sin haber tocado nada. Con el mazo agotado no se pregunta, porque es
+   * la única salida posible.
+   */
   async function rebarajar() {
+    const aMediaPartida = quedan > 0
+
+    if (aMediaPartida && !confirm('¿Reiniciar el mazo? Volverán todas las cartas ya jugadas.')) {
+      return
+    }
+
     setErrorAccion(null)
     setRevelada(null)
     setEstadoMazo('barajando')
@@ -167,12 +181,21 @@ export function Table() {
           </p>
         )}
 
-        {quedan === 0 && total > 0 && (
-          <Button variante="lima" onClick={rebarajar} className="w-full">
-            <IconoBarajar className="size-5" aria-hidden="true" />
-            Rebarajar
-          </Button>
-        )}
+        {/* Con el mazo agotado, rebarajar es la acción esperada y va destacada.
+            A media partida existe igual, pero discreta: la principal sigue
+            siendo ROBAR y no queremos dos botones compitiendo. */}
+        {jugadas > 0 &&
+          (quedan === 0 ? (
+            <Button variante="lima" onClick={rebarajar} className="w-full">
+              <IconoBarajar className="size-5" aria-hidden="true" />
+              Rebarajar
+            </Button>
+          ) : (
+            <Button variante="fantasma" onClick={rebarajar} className="w-full">
+              <IconoBarajar className="size-5" aria-hidden="true" />
+              Reiniciar mazo
+            </Button>
+          ))}
 
         {total === 0 && (
           <Link
