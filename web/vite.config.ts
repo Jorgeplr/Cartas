@@ -13,6 +13,10 @@ const config: UserConfig & { test: InlineConfig } = {
     port: 5173,
     // Sin polling, el hot reload no ve los cambios a traves del volumen de Docker.
     watch: { usePolling: true },
+    // El puerto solo se publica en 127.0.0.1, asi que no abre nada al exterior.
+    // Permite abrir la app desde otro contenedor (pruebas con navegador real)
+    // o por IP de la red local para verla en el movil.
+    allowedHosts: true,
   },
   test: {
     environment: 'jsdom',

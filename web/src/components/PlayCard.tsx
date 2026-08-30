@@ -76,7 +76,7 @@ export function PlayCard({
 
   return (
     <article
-      className={`relative flex aspect-2/3 w-full flex-col justify-between overflow-hidden rounded-carta border-2 ${estilo.borde} bg-superficie p-5 ${estilo.glow} ${drawn ? 'opacity-55' : ''} ${className}`}
+      className={`relative flex aspect-2/3 w-full flex-col justify-between overflow-hidden rounded-carta border-2 ${estilo.borde} bg-superficie ${compact ? 'p-4' : 'p-5'} ${estilo.glow} ${drawn ? 'opacity-55' : ''} ${className}`}
     >
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(255,255,255,0.07),transparent_60%)]" />
 
@@ -94,8 +94,16 @@ export function PlayCard({
         )}
       </header>
 
-      <div className="relative flex flex-1 flex-col justify-center gap-3 py-4">
-        <h3 className="font-display text-xl leading-tight text-tinta wrap-break-word">
+      <div
+        className={`relative flex flex-1 flex-col justify-center wrap-break-word ${
+          compact ? 'gap-2 py-2' : 'gap-3 py-4'
+        }`}
+      >
+        <h3
+          className={`font-display leading-tight text-tinta wrap-break-word ${
+            compact ? 'line-clamp-2 text-base' : 'text-xl'
+          }`}
+        >
           {title || 'Sin título'}
         </h3>
 
@@ -106,8 +114,11 @@ export function PlayCard({
           </p>
         ) : (
           <p
-            className={`text-[15px] leading-relaxed text-tinta/90 wrap-break-word ${
-              compact ? 'line-clamp-5' : ''
+            className={`text-tinta/90 wrap-break-word ${
+              // Tres lineas es lo que cabe de verdad en una carta de rejilla a
+              // 375px. Con mas, el overflow del recuadro corta a media palabra
+              // antes de que la elipsis llegue a aparecer.
+              compact ? 'line-clamp-3 text-sm leading-snug' : 'text-[15px] leading-relaxed'
             }`}
           >
             {challenge || 'Escribe el reto…'}

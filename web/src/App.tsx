@@ -22,7 +22,7 @@ function Layout() {
         <nav className="mx-auto flex w-full max-w-5xl items-center gap-2 px-5 py-2">
           <Link
             to="/"
-            className="mr-auto font-display text-base font-semibold tracking-tight text-fucsia"
+            className="mr-auto truncate font-display text-sm font-semibold tracking-tight text-fucsia sm:text-base"
           >
             Cartas de Reto
           </Link>

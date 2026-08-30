@@ -83,7 +83,7 @@ export function Deck({ estado, onEntradaLista }: Props) {
         : 'reposo'
 
   return (
-    <div className="relative w-60" aria-hidden="true">
+    <div className="relative w-52 sm:w-60" aria-hidden="true">
       {/* La primera capa ocupa el flujo y da altura al contenedor. */}
       <div className="invisible">
         <CardBack />

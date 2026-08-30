@@ -67,7 +67,7 @@ export function Pair() {
               Tu código
             </h2>
 
-            <p className="my-4 font-display text-5xl font-semibold tracking-[0.18em] text-fucsia tabular-nums drop-shadow-[0_0_18px_var(--color-fucsia)]">
+            <p className="my-4 font-display text-4xl font-semibold sm:text-5xl tracking-[0.18em] text-fucsia tabular-nums drop-shadow-[0_0_18px_var(--color-fucsia)]">
               {miCodigo}
             </p>
 
@@ -125,13 +125,6 @@ export function Pair() {
             </Button>
           </form>
 
-          <button
-            onClick={logout}
-            className="mx-auto inline-flex min-h-11 items-center gap-2 px-4 text-sm text-tinta-suave transition-colors duration-200 hover:text-tinta"
-          >
-            <IconoSalir className="size-4" aria-hidden="true" />
-            Cerrar sesión
-          </button>
         </div>
 
         <section className="rounded-2xl border border-borde bg-superficie/60 p-6 backdrop-blur-sm">
@@ -232,6 +225,14 @@ export function Pair() {
           )}
         </section>
       </div>
+
+      <button
+        onClick={logout}
+        className="mx-auto mt-10 flex min-h-11 items-center gap-2 px-4 text-sm text-tinta-suave transition-colors duration-200 hover:text-tinta"
+      >
+        <IconoSalir className="size-4" aria-hidden="true" />
+        Cerrar sesión
+      </button>
     </div>
   )
 }

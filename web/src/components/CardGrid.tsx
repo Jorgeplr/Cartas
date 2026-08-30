@@ -7,7 +7,11 @@ import { DIFICULTADES, ETIQUETA_DIFICULTAD, type Card, type Difficulty } from '.
 
 export function CardGrid({ children }: { children: ReactNode }) {
   return (
-    <div className="grid grid-cols-[repeat(auto-fill,minmax(11rem,1fr))] gap-5">{children}</div>
+    // Dos columnas desde el movil: con minmax(11rem) una pantalla de 375px
+    // daba UNA sola carta de 500px de alto, que obliga a scrollear por cada reto.
+    <div className="grid grid-cols-2 gap-4 sm:grid-cols-[repeat(auto-fill,minmax(11rem,1fr))] sm:gap-5">
+      {children}
+    </div>
   )
 }
 

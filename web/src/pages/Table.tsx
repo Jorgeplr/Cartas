@@ -96,7 +96,7 @@ export function Table() {
         miTurno={miTurno}
       />
 
-      <div className="grid min-h-104 w-full place-items-center">
+      <div className="grid min-h-88 w-full place-items-center sm:min-h-104">
         <AnimatePresence mode="wait">
           {revelada ? (
             <CartaRevelada key={`carta-${revelada.id}`} carta={revelada} />
@@ -115,7 +115,7 @@ export function Table() {
               key="vacio"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="grid aspect-2/3 w-60 place-items-center rounded-carta border-2 border-dashed border-borde px-6 text-center"
+              className="grid aspect-2/3 w-52 place-items-center sm:w-60 rounded-carta border-2 border-dashed border-borde px-6 text-center"
             >
               <p className="text-tinta-suave">
                 {total === 0
@@ -206,7 +206,7 @@ function CartaRevelada({ carta }: { carta: Card }) {
       exit={menosMovimiento ? { opacity: 0 } : { opacity: 0, scale: 0.94 }}
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
       style={{ transformStyle: 'preserve-3d', perspective: 1200 }}
-      className="cara-carta w-60"
+      className="cara-carta w-52 sm:w-60"
     >
       <PlayCard
         title={carta.title}
@@ -263,12 +263,14 @@ function Turnos({ yo, pareja, miTurno }: { yo: string; pareja: string; miTurno: 
   )
 }
 
+/** Un nombre largo no puede empujar al otro jugador fuera de la pantalla: en
+ *  movil cada pastilla se queda en su mitad y recorta con elipsis. */
 function Jugador({ nombre, activo, sufijo }: { nombre: string; activo: boolean; sufijo?: string }) {
   return (
     <motion.span
       animate={activo ? { scale: 1.04 } : { scale: 1 }}
       transition={{ duration: 0.25, ease: 'easeOut' }}
-      className={`rounded-full border px-4 py-2 text-sm font-bold transition-colors duration-300 ${
+      className={`max-w-[42%] truncate rounded-full border px-3 py-2 text-sm font-bold transition-colors duration-300 sm:max-w-none sm:px-4 ${
         activo ? 'border-lima bg-lima/10 text-lima shadow-lima' : 'border-borde text-tinta-suave'
       }`}
     >
