@@ -132,6 +132,66 @@ export const SUGERENCIAS: Record<Nivel, Sugerencia[]> = {
       challenge: 'Nombra tus tres partes favoritas de la otra persona y por qué.',
       difficulty: 'medio',
     },
+    {
+      title: 'Dilo en voz alta',
+      challenge: 'Dile algo subido de tono, mirándola a los ojos y sin bajar la voz.',
+      difficulty: 'dificil',
+    },
+    {
+      title: 'Lo que haría ahora',
+      challenge: 'Cuéntale al oído qué te gustaría estar haciendo con ella en este momento.',
+      difficulty: 'dificil',
+    },
+    {
+      title: 'Qué me pone',
+      challenge: 'Describe con detalle qué es lo que más te gusta de ella. Nada de respuestas cortas.',
+      difficulty: 'medio',
+    },
+    {
+      title: 'Mensaje caliente',
+      challenge: 'Escríbele por chat lo que no te atreves a decirle en voz alta. Que lo lea delante de ti.',
+      difficulty: 'dificil',
+    },
+    {
+      title: 'Dónde',
+      challenge: 'Señala dónde te gustaría que te besara ahora mismo. Sin decir nada, solo señala.',
+      difficulty: 'dificil',
+    },
+    {
+      title: 'Tres deseos',
+      challenge: 'Di tres cosas que te gustaría que te hiciera esta noche.',
+      difficulty: 'dificil',
+    },
+    {
+      title: 'Aquella vez',
+      challenge: 'Cuéntale la última vez que pensaste en ella y no fue precisamente inocente.',
+      difficulty: 'dificil',
+    },
+    {
+      title: 'Piropo sin filtro',
+      challenge: 'Un piropo que jamás dirías en público. Ahora, en voz alta.',
+      difficulty: 'medio',
+    },
+    {
+      title: 'La escena',
+      challenge: 'Describe la escena que se te viene a la cabeza cuando piensas en los dos a solas.',
+      difficulty: 'dificil',
+    },
+    {
+      title: 'Cuenta atrás',
+      challenge: 'Treinta segundos diciéndole cosas al oído. No puedes callarte ni un momento.',
+      difficulty: 'dificil',
+    },
+    {
+      title: 'Ropa',
+      challenge: 'Dile qué prenda suya te gusta más y cuál preferirías que no llevara puesta.',
+      difficulty: 'medio',
+    },
+    {
+      title: 'Sin tocar',
+      challenge: 'Ponla nerviosa solo hablando. No vale tocarla, únicamente palabras.',
+      difficulty: 'dificil',
+    },
   ],
 
   atrevida: [
@@ -173,6 +233,36 @@ export const SUGERENCIAS: Record<Nivel, Sugerencia[]> = {
     {
       title: 'Dos minutos',
       challenge: 'Dos minutos a solas. Lo que pase ahí lo decidís vosotros.',
+      difficulty: 'dificil',
+    },
+    {
+      title: 'Audio para ella',
+      challenge: 'Grábale un audio diciéndole lo que te gustaría hacerle. Que lo escuche delante de ti.',
+      difficulty: 'dificil',
+    },
+    {
+      title: 'Lista de la compra',
+      challenge: 'Enumera cinco cosas que quieres hacer con ella. Sin saltarte ninguna por vergüenza.',
+      difficulty: 'dificil',
+    },
+    {
+      title: 'Mapa',
+      challenge: 'Recorre con un dedo el camino que harías. Solo el dedo, y sin explicar nada.',
+      difficulty: 'dificil',
+    },
+    {
+      title: 'Preguntas sin filtro',
+      challenge: 'Tres preguntas sobre lo que le gusta en la intimidad. Tiene que responder a todas.',
+      difficulty: 'dificil',
+    },
+    {
+      title: 'Confesión de la primera vez',
+      challenge: 'Cuenta qué pensaste la primera vez que os quedasteis a solas.',
+      difficulty: 'dificil',
+    },
+    {
+      title: 'Ella decide',
+      challenge: 'Que te diga algo al oído. Tienes que hacerlo, sea lo que sea.',
       difficulty: 'dificil',
     },
   ],
