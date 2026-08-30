@@ -29,7 +29,8 @@ aplican solas con cada `docker compose up`. No hay paso manual.
    mete el suyo. Al emparejaros compartís baraja para siempre.
 3. En **Mazo**, cada quien escribe sus cartas: título, reto y dificultad.
 4. En **Mesa**, se roba por turnos. Sale una carta al azar y la cumple quien la
-   robó. Cuando el mazo se agota, podéis rebarajar.
+   robó. **Reiniciar mazo** devuelve todas las jugadas cuando queráis, no solo
+   al agotarse la baraja.
 
 ## Tests
 

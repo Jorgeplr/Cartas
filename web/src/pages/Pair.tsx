@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react'
+import { useEffect, useState, type FormEvent } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useAuth } from '../auth/AuthContext'
 import { Button } from '../components/Button'
@@ -20,6 +20,17 @@ export function Pair() {
   const [editor, setEditor] = useState<{ carta?: Card } | null>(null)
 
   const miCodigo = session?.user.invite_code ?? ''
+
+  // Si la otra persona mete tu código, aquí no pasa nada hasta recargar: eres
+  // el lado pasivo del emparejamiento. Preguntando cada 4s, en cuanto aparece
+  // la pareja el guard te lleva solo a la mesa.
+  useEffect(() => {
+    const id = setInterval(() => {
+      if (document.visibilityState === 'visible') void refresh()
+    }, 4000)
+
+    return () => clearInterval(id)
+  }, [refresh])
 
   async function copiar() {
     try {
