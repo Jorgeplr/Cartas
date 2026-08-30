@@ -2,7 +2,7 @@ import { useState, type ReactNode } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useAuth } from '../auth/AuthContext'
 import { Button } from '../components/Button'
-import { CardGrid, CardTile, EmptyDeck } from '../components/CardGrid'
+import { CardGrid, CardTile, EmptyDeck, ResumenDificultad } from '../components/CardGrid'
 import { IconoCerrar, IconoMas } from '../components/Icon'
 import { useCards } from '../lib/useCards'
 import type { Card } from '../lib/types'
@@ -58,6 +58,7 @@ export function Cards() {
 
             <CardEditor
               carta={editor.carta}
+              usadas={mias.map((c) => c.title)}
               error={error}
               onCancel={() => setEditor(null)}
               onSave={async (borrador) => {
@@ -80,7 +81,7 @@ export function Cards() {
         </p>
       ) : (
         <div className="flex flex-col gap-10">
-          <Seccion titulo={`Tus cartas (${mias.length})`}>
+          <Seccion titulo={`Tus cartas ()`} extra={<ResumenDificultad cards={mias} />}>
             {mias.length === 0 ? (
               <EmptyDeck
                 mensaje="Todavía no has escrito ninguna. La primera marca el tono de la partida."
@@ -118,10 +119,21 @@ export function Cards() {
   )
 }
 
-function Seccion({ titulo, children }: { titulo: string; children: ReactNode }) {
+function Seccion({
+  titulo,
+  extra,
+  children,
+}: {
+  titulo: string
+  extra?: ReactNode
+  children: ReactNode
+}) {
   return (
     <section>
-      <h2 className="mb-4 font-display text-lg text-tinta-suave">{titulo}</h2>
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <h2 className="font-display text-lg text-tinta-suave">{titulo}</h2>
+        {extra}
+      </div>
       {children}
     </section>
   )

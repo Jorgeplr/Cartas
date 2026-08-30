@@ -3,6 +3,7 @@ import { Button } from '../components/Button'
 import { DifficultyPicker } from '../components/DifficultyPicker'
 import { Field, TextAreaField } from '../components/Field'
 import { PlayCard } from '../components/PlayCard'
+import { SugerenciasPicker } from '../components/SugerenciasPicker'
 import type { Card, Difficulty } from '../lib/types'
 
 export const MAX_TITULO = 60
@@ -17,6 +18,8 @@ export interface BorradorCarta {
 interface Props {
   /** Si viene, el editor edita esa carta en vez de crear una nueva */
   carta?: Card
+  /** Títulos que ya están en el mazo, para no sugerir repetidos */
+  usadas?: string[]
   onSave: (borrador: BorradorCarta) => Promise<void> | void
   onCancel?: () => void
   error?: string | null
@@ -27,7 +30,7 @@ interface Props {
  * el mismo componente que verá la otra persona al robarla. Sin sorpresas entre
  * lo que compones y lo que se juega.
  */
-export function CardEditor({ carta, onSave, onCancel, error }: Props) {
+export function CardEditor({ carta, usadas = [], onSave, onCancel, error }: Props) {
   const [title, setTitle] = useState(carta?.title ?? '')
   const [challenge, setChallenge] = useState(carta?.challenge ?? '')
   const [difficulty, setDifficulty] = useState<Difficulty>(carta?.difficulty ?? 'medio')
@@ -54,6 +57,19 @@ export function CardEditor({ carta, onSave, onCancel, error }: Props) {
   return (
     <form onSubmit={enviar} className="grid gap-8 md:grid-cols-[1fr_minmax(0,17rem)]">
       <div className="flex flex-col gap-5">
+        {/* Solo al crear: editando ya tienes un texto, y proponerte otro
+            invitaria a perderlo de un clic. */}
+        {!carta && (
+          <SugerenciasPicker
+            usadas={usadas}
+            onElegir={(s) => {
+              setTitle(s.title)
+              setChallenge(s.challenge)
+              setDifficulty(s.difficulty)
+            }}
+          />
+        )}
+
         <Field
           label="Título"
           value={title}

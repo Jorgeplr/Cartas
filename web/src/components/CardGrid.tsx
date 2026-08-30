@@ -3,15 +3,47 @@ import { motion } from 'framer-motion'
 import { Button } from './Button'
 import { IconoLapiz, IconoMas, IconoPapelera } from './Icon'
 import { PlayCard } from './PlayCard'
-import type { Card } from '../lib/types'
+import { DIFICULTADES, ETIQUETA_DIFICULTAD, type Card, type Difficulty } from '../lib/types'
 
 export function CardGrid({ children }: { children: ReactNode }) {
   return (
-    <div className="grid grid-cols-[repeat(auto-fill,minmax(9.5rem,1fr))] gap-4">{children}</div>
+    <div className="grid grid-cols-[repeat(auto-fill,minmax(11rem,1fr))] gap-5">{children}</div>
   )
 }
 
-/** Entrada escalonada de 40ms: la rejilla se llena con ritmo en vez de aparecer de golpe. */
+const PUNTO: Record<Difficulty, string> = {
+  facil: 'bg-facil',
+  medio: 'bg-medio',
+  dificil: 'bg-dificil',
+}
+
+/** Cuántas cartas hay de cada nivel. Ayuda a ver si el mazo está desequilibrado
+ *  antes de jugarlo, que es cuando aún puedes arreglarlo. */
+export function ResumenDificultad({ cards }: { cards: Card[] }) {
+  if (cards.length === 0) return null
+
+  return (
+    <ul className="flex flex-wrap gap-3">
+      {DIFICULTADES.map((nivel) => {
+        const total = cards.filter((c) => c.difficulty === nivel).length
+
+        return (
+          <li key={nivel} className="flex items-center gap-1.5 text-sm text-tinta-suave">
+            <span className={`size-2 rounded-full ${PUNTO[nivel]}`} aria-hidden="true" />
+            <span className="tabular-nums">{total}</span>
+            <span>{ETIQUETA_DIFICULTAD[nivel].toLowerCase()}</span>
+          </li>
+        )
+      })}
+    </ul>
+  )
+}
+
+/**
+ * Entrada escalonada de 40ms: la rejilla se llena con ritmo en vez de aparecer
+ * de golpe. Al pasar el ratón la carta se eleva con `transform`, que no
+ * recalcula el layout ni desplaza a sus vecinas.
+ */
 export function CardTile({
   carta,
   indice,
@@ -23,26 +55,50 @@ export function CardTile({
   onEdit?: (carta: Card) => void
   onDelete?: (carta: Card) => void
 }) {
-  const editable = carta.mine && !carta.drawn && (onEdit || onDelete)
+  const editable = carta.mine && !carta.drawn
+  const abrible = editable && onEdit
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 14 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.25, ease: 'easeOut', delay: Math.min(indice, 8) * 0.04 }}
+      className="group"
     >
-      <PlayCard
-        title={carta.title}
-        challenge={carta.challenge}
-        difficulty={carta.difficulty}
-        hidden={carta.hidden}
-        drawn={carta.drawn}
-      />
+      {abrible ? (
+        // La carta entera abre el editor: ahí se ve el reto completo, que es
+        // la via de escape al recorte de la rejilla.
+        <button
+          type="button"
+          onClick={() => onEdit(carta)}
+          aria-label={`Editar la carta ${carta.title}`}
+          className="block w-full rounded-carta text-left transition-transform duration-200 ease-out group-hover:-translate-y-1"
+        >
+          <PlayCard
+            title={carta.title}
+            challenge={carta.challenge}
+            difficulty={carta.difficulty}
+            hidden={carta.hidden}
+            drawn={carta.drawn}
+            compact
+          />
+        </button>
+      ) : (
+        <PlayCard
+          title={carta.title}
+          challenge={carta.challenge}
+          difficulty={carta.difficulty}
+          hidden={carta.hidden}
+          drawn={carta.drawn}
+          compact
+        />
+      )}
 
-      {editable && (
+      {editable && (onEdit || onDelete) && (
         <div className="mt-2 flex gap-2">
           {onEdit && (
             <button
+              type="button"
               onClick={() => onEdit(carta)}
               className="inline-flex min-h-11 flex-1 items-center justify-center gap-1.5 rounded-lg border border-borde text-sm text-tinta-suave transition-colors duration-200 hover:border-fucsia/60 hover:text-tinta"
             >
@@ -53,6 +109,7 @@ export function CardTile({
 
           {onDelete && (
             <button
+              type="button"
               onClick={() => {
                 if (confirm(`¿Borrar "${carta.title}"? No se puede deshacer.`)) onDelete(carta)
               }}
@@ -71,7 +128,7 @@ export function CardTile({
 export function EmptyDeck({ mensaje, accion }: { mensaje: string; accion?: () => void }) {
   return (
     <div className="rounded-2xl border border-dashed border-borde px-6 py-10 text-center">
-      <p className="text-tinta-suave">{mensaje}</p>
+      <p className="mx-auto max-w-sm text-tinta-suave">{mensaje}</p>
       {accion && (
         <Button variante="lima" onClick={accion} className="mt-4">
           <IconoMas className="size-5" aria-hidden="true" />

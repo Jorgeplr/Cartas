@@ -47,6 +47,11 @@ interface PlayCardProps {
   hidden?: boolean
   /** Marca visual de carta ya jugada */
   drawn?: boolean
+  /**
+   * Para rejillas: recorta el reto con elipsis en vez de dejar que rebose.
+   * En la mesa siempre va completo, que es donde hay que poder leerlo.
+   */
+  compact?: boolean
   className?: string
 }
 
@@ -62,6 +67,7 @@ export function PlayCard({
   faceDown = false,
   hidden = false,
   drawn = false,
+  compact = false,
   className = '',
 }: PlayCardProps) {
   if (faceDown) return <CardBack className={className} />
@@ -89,7 +95,7 @@ export function PlayCard({
       </header>
 
       <div className="relative flex flex-1 flex-col justify-center gap-3 py-4">
-        <h3 className="font-display text-xl leading-tight text-tinta break-words">
+        <h3 className="font-display text-xl leading-tight text-tinta wrap-break-word">
           {title || 'Sin título'}
         </h3>
 
@@ -99,7 +105,11 @@ export function PlayCard({
             Reto oculto hasta que salga del mazo
           </p>
         ) : (
-          <p className="text-[15px] leading-relaxed text-tinta/90 break-words">
+          <p
+            className={`text-[15px] leading-relaxed text-tinta/90 wrap-break-word ${
+              compact ? 'line-clamp-5' : ''
+            }`}
+          >
             {challenge || 'Escribe el reto…'}
           </p>
         )}

@@ -2,7 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useAuth } from '../auth/AuthContext'
 import { Button } from '../components/Button'
-import { CardGrid, CardTile } from '../components/CardGrid'
+import { CardGrid, CardTile, ResumenDificultad } from '../components/CardGrid'
 import { IconoCerrar, IconoCheck, IconoCopiar, IconoMas, IconoSalir } from '../components/Icon'
 import { api, ApiError } from '../lib/api'
 import { useCards } from '../lib/useCards'
@@ -144,6 +144,9 @@ export function Pair() {
               <p className="text-sm text-tinta-suave">
                 Las escribes tú, las cumplirá la otra persona.
               </p>
+              <div className="mt-2">
+                <ResumenDificultad cards={mias} />
+              </div>
             </div>
 
             {!editor && (
@@ -179,6 +182,7 @@ export function Pair() {
 
                 <CardEditor
                   carta={editor.carta}
+                  usadas={mias.map((c) => c.title)}
                   error={errorMazo}
                   onCancel={() => setEditor(null)}
                   onSave={async (borrador) => {

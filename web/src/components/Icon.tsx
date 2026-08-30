@@ -122,3 +122,22 @@ export function IconoDificultad({ nivel, ...props }: IconProps & { nivel: Diffic
     </Svg>
   )
 }
+
+export function IconoDado(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <rect x="3" y="3" width="18" height="18" rx="3" />
+      <circle cx="8.5" cy="8.5" r="1" fill="currentColor" />
+      <circle cx="15.5" cy="15.5" r="1" fill="currentColor" />
+      <circle cx="12" cy="12" r="1" fill="currentColor" />
+    </Svg>
+  )
+}
+
+export function IconoLlama(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M12 3c3 3.5 5 6 5 9a5 5 0 0 1-10 0c0-1.6.7-3 2-4.4 0 1.6.8 2.4 1.6 2.4.9 0 1.4-.8 1.4-2 0-1.8-.5-3.4-1-5Z" />
+    </Svg>
+  )
+}
