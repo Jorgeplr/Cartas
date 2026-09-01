@@ -121,8 +121,9 @@ POST   /api/deck/reshuffle                                 -> 200 { cards_left }
 
 Reglas de autorización:
 
-- `PATCH` y `DELETE` de cartas: solo el autor, y solo si `drawn_at` es nulo.
-  Una carta ya robada es historia, no se edita.
+- `PATCH` y `DELETE` de cartas: solo el autor. Que la carta ya se haya jugado
+  no la congela: el mazo se rebaraja y se vuelve a jugar, asi que corregir una
+  errata o subir el tono sigue teniendo sentido despues.
 - `POST /api/draw`: solo si hay pareja, solo si es tu turno, solo si quedan
   cartas sin robar. Selecciona al azar entre las no robadas, marca `drawn_at`,
   alterna `current_turn_user_id` a la otra persona, todo en una transacción.

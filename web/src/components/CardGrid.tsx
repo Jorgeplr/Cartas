@@ -62,7 +62,9 @@ export function CardTile({
   onEdit?: (carta: Card) => void
   onDelete?: (carta: Card) => void
 }) {
-  const editable = carta.mine && !carta.drawn
+  // Tus cartas se editan siempre, tambien las ya jugadas: el mazo se rebaraja
+  // y se vuelve a jugar, asi que una errata o un reto flojo siguen importando.
+  const editable = carta.mine
 
   return (
     <motion.div

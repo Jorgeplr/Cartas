@@ -32,10 +32,10 @@ module Api
     def editable_card
       card = mazo.find(params[:id])
 
+      # Solo el autor toca sus cartas. Que ya se haya jugado no la congela:
+      # el mazo se rebaraja y se vuelve a jugar, asi que corregir una errata
+      # o subir el tono de un reto sigue teniendo sentido despues.
       raise Forbidden, "not_your_card" unless card.author_id == current_user.id
-      # Una carta ya robada es historia: no se reescribe lo que la otra
-      # persona ya leyo.
-      raise Forbidden, "card_already_drawn" if card.drawn?
 
       card
     end

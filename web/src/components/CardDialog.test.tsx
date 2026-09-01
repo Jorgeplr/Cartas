@@ -28,14 +28,14 @@ describe('CardDialog', () => {
     expect(screen.getByText(RETO_LARGO)).toBeInTheDocument()
   })
 
-  it('abre también las cartas ya jugadas, que no tienen botón de editar', () => {
-    // Este era el agujero: en la rejilla una carta jugada no se podia abrir
-    // por ningun sitio, asi que su texto quedaba recortado para siempre.
+  it('abre las cartas ya jugadas y deja editarlas igual', () => {
+    // Este era el agujero: una carta jugada no se podia abrir ni editar, y
+    // con el mazo rebarajandose la mayoria acababan asi, congeladas.
     render(<CardDialog carta={carta({ drawn: true })} onClose={vi.fn()} onEdit={vi.fn()} />)
 
     expect(screen.getByText(RETO_LARGO)).toBeInTheDocument()
     expect(screen.getByText(/ya jugada/i)).toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: /editar/i })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /editar/i })).toBeInTheDocument()
   })
 
   it('se cierra con Escape', async () => {

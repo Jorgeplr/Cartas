@@ -55,11 +55,23 @@ RSpec.describe "Cards" do
     expect(response).to have_http_status(:forbidden)
   end
 
-  it "prohibe editar una carta propia ya robada" do
+  it "permite editar una carta propia aunque ya se haya jugado" do
+    # El mazo se rebaraja y se vuelve a jugar: congelar la carta al primer
+    # robo dejaba media baraja intocable.
     mia = carta(author: ana, drawn_at: Time.current)
 
-    patch "/api/cards/#{mia.id}", params: { title: "Nueva" }, headers: auth_headers(ana)
-    expect(response).to have_http_status(:forbidden)
+    patch "/api/cards/#{mia.id}", params: { title: "Corregida" }, headers: auth_headers(ana)
+
+    expect(response).to have_http_status(:ok)
+    expect(mia.reload.title).to eq("Corregida")
+  end
+
+  it "permite borrar una carta propia ya jugada" do
+    mia = carta(author: ana, drawn_at: Time.current)
+
+    delete "/api/cards/#{mia.id}", headers: auth_headers(ana)
+
+    expect(response).to have_http_status(:no_content)
   end
 
   it "permite borrar tu propia carta que sigue en el mazo" do
