@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useAuth } from '../auth/AuthContext'
 import { Button } from '../components/Button'
+import { CardDialog } from '../components/CardDialog'
 import { CardGrid, CardTile, ResumenDificultad } from '../components/CardGrid'
 import { IconoCerrar, IconoCheck, IconoCopiar, IconoMas, IconoSalir } from '../components/Icon'
 import { api, ApiError } from '../lib/api'
@@ -18,6 +19,7 @@ export function Pair() {
   const [emparejando, setEmparejando] = useState(false)
   const [copiado, setCopiado] = useState(false)
   const [editor, setEditor] = useState<{ carta?: Card } | null>(null)
+  const [abierta, setAbierta] = useState<Card | null>(null)
 
   const miCodigo = session?.user.invite_code ?? ''
 
@@ -222,6 +224,7 @@ export function Pair() {
                   key={carta.id}
                   carta={carta}
                   indice={i}
+                  onOpen={setAbierta}
                   onEdit={(c) => setEditor({ carta: c })}
                   onDelete={borrar}
                 />
@@ -244,6 +247,23 @@ export function Pair() {
         <IconoSalir className="size-4" aria-hidden="true" />
         Cerrar sesión
       </button>
+
+      <AnimatePresence>
+        {abierta && (
+          <CardDialog
+            carta={abierta}
+            onClose={() => setAbierta(null)}
+            onEdit={(c) => {
+              setAbierta(null)
+              setEditor({ carta: c })
+            }}
+            onDelete={(c) => {
+              setAbierta(null)
+              void borrar(c)
+            }}
+          />
+        )}
+      </AnimatePresence>
     </div>
   )
 }

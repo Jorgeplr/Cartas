@@ -94,9 +94,11 @@ export function PlayCard({
         )}
       </header>
 
+      {/* A tamaño completo el texto nunca se corta: si un reto muy largo no
+          cabe, la zona central hace scroll dentro de la propia carta. */}
       <div
         className={`relative flex flex-1 flex-col justify-center wrap-break-word ${
-          compact ? 'gap-2 py-2' : 'gap-3 py-4'
+          compact ? 'gap-2 py-2' : 'gap-3 overflow-y-auto py-4'
         }`}
       >
         <h3

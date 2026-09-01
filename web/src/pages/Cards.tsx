@@ -2,6 +2,7 @@ import { useState, type ReactNode } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useAuth } from '../auth/AuthContext'
 import { Button } from '../components/Button'
+import { CardDialog } from '../components/CardDialog'
 import { CardGrid, CardTile, EmptyDeck, ResumenDificultad } from '../components/CardGrid'
 import { IconoCerrar, IconoMas } from '../components/Icon'
 import { useCards } from '../lib/useCards'
@@ -12,6 +13,7 @@ export function Cards() {
   const { session } = useAuth()
   const { mias, suyas, cargando, error, guardar, borrar } = useCards()
   const [editor, setEditor] = useState<{ carta?: Card } | null>(null)
+  const [abierta, setAbierta] = useState<Card | null>(null)
 
   const nombrePareja = session?.partner?.display_name ?? 'tu pareja'
 
@@ -97,6 +99,7 @@ export function Cards() {
                     key={carta.id}
                     carta={carta}
                     indice={i}
+                    onOpen={setAbierta}
                     onEdit={(c) => setEditor({ carta: c })}
                     onDelete={borrar}
                   />
@@ -111,13 +114,30 @@ export function Cards() {
             ) : (
               <CardGrid>
                 {suyas.map((carta, i) => (
-                  <CardTile key={carta.id} carta={carta} indice={i} />
+                  <CardTile key={carta.id} carta={carta} indice={i} onOpen={setAbierta} />
                 ))}
               </CardGrid>
             )}
           </Seccion>
         </div>
       )}
+
+      <AnimatePresence>
+        {abierta && (
+          <CardDialog
+            carta={abierta}
+            onClose={() => setAbierta(null)}
+            onEdit={(c) => {
+              setAbierta(null)
+              setEditor({ carta: c })
+            }}
+            onDelete={(c) => {
+              setAbierta(null)
+              void borrar(c)
+            }}
+          />
+        )}
+      </AnimatePresence>
     </div>
   )
 }

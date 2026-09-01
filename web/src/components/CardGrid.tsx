@@ -51,16 +51,18 @@ export function ResumenDificultad({ cards }: { cards: Card[] }) {
 export function CardTile({
   carta,
   indice,
+  onOpen,
   onEdit,
   onDelete,
 }: {
   carta: Card
   indice: number
+  /** Abre la carta a tamaño completo para leer el reto entero */
+  onOpen?: (carta: Card) => void
   onEdit?: (carta: Card) => void
   onDelete?: (carta: Card) => void
 }) {
   const editable = carta.mine && !carta.drawn
-  const abrible = editable && onEdit
 
   return (
     <motion.div
@@ -69,14 +71,14 @@ export function CardTile({
       transition={{ duration: 0.25, ease: 'easeOut', delay: Math.min(indice, 8) * 0.04 }}
       className="group"
     >
-      {abrible ? (
-        // La carta entera abre el editor: ahí se ve el reto completo, que es
-        // la via de escape al recorte de la rejilla.
+      {/* Cualquier carta se abre, tambien las ya jugadas: en la rejilla el
+          texto va recortado y esta es la unica forma de leerlo entero. */}
+      {onOpen ? (
         <button
           type="button"
-          onClick={() => onEdit(carta)}
-          aria-label={`Editar la carta ${carta.title}`}
-          className="block w-full rounded-carta text-left transition-transform duration-200 ease-out group-hover:-translate-y-1"
+          onClick={() => onOpen(carta)}
+          aria-label={`Ver la carta ${carta.title}`}
+          className="block w-full cursor-pointer rounded-carta text-left transition-transform duration-200 ease-out group-hover:-translate-y-1"
         >
           <PlayCard
             title={carta.title}
