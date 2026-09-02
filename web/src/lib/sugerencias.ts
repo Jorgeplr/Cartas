@@ -192,6 +192,36 @@ export const SUGERENCIAS: Record<Nivel, Sugerencia[]> = {
       challenge: 'Ponla nerviosa solo hablando. No vale tocarla, únicamente palabras.',
       difficulty: 'dificil',
     },
+    {
+      title: 'Cuenta regresiva',
+      challenge: 'Diez segundos mirándola a los ojos sin hacer nada. A la de cero, tú decides.',
+      difficulty: 'medio',
+    },
+    {
+      title: 'La primera vez que',
+      challenge: 'Cuenta la primera vez que pensaste en ella de una forma poco decente.',
+      difficulty: 'dificil',
+    },
+    {
+      title: 'Dos dedos',
+      challenge: 'Recorre con dos dedos el camino que más te apetezca. Sin explicar la ruta.',
+      difficulty: 'dificil',
+    },
+    {
+      title: 'Sin manos III',
+      challenge: 'Consigue que se ría o se ponga nerviosa sin usar las manos ni una vez.',
+      difficulty: 'medio',
+    },
+    {
+      title: 'Peor idea',
+      challenge: 'Propón la peor idea que se te ocurra ahora mismo. Si acepta, la hacéis.',
+      difficulty: 'dificil',
+    },
+    {
+      title: 'Traducción libre',
+      challenge: 'Dile lo que estás pensando, pero sin usar ninguna palabra directa.',
+      difficulty: 'medio',
+    },
   ],
 
   atrevida: [
@@ -264,6 +294,84 @@ export const SUGERENCIAS: Record<Nivel, Sugerencia[]> = {
       title: 'Ella decide',
       challenge: 'Que te diga algo al oído. Tienes que hacerlo, sea lo que sea.',
       difficulty: 'dificil',
+    },
+    {
+      title: 'Luces fuera',
+      challenge: 'Apagad todas las luces. Dos minutos a oscuras y nadie dice qué va a pasar.',
+      difficulty: 'dificil',
+    },
+    {
+      title: 'Cámara lenta',
+      challenge: 'Repetid el último beso, pero al triple de lento. Sin acelerar aunque queráis.',
+      difficulty: 'dificil',
+    },
+    {
+      title: 'Donde tú elijas',
+      challenge: 'Un beso donde la otra persona decida. Sin negociar y sin poner cara rara.',
+      difficulty: 'dificil',
+    },
+    {
+      title: 'Mordisco',
+      challenge: 'Un mordisco suave donde te señalen. Ellos eligen el sitio y la fuerza.',
+      difficulty: 'dificil',
+    },
+    {
+      title: 'Ni una palabra',
+      challenge: 'Tres minutos sin hablar. Solo manos y miradas. El primero que hable, paga.',
+      difficulty: 'dificil',
+    },
+    {
+      title: 'Un minuto entero',
+      challenge: 'Un minuto haciendo exactamente lo que te pidan, sin preguntar por qué.',
+      difficulty: 'dificil',
+    },
+    {
+      title: 'Manos quietas',
+      challenge: 'Con las manos a la espalda, deja que te quite lo que quiera. Tú no ayudas.',
+      difficulty: 'dificil',
+    },
+    {
+      title: 'Ruleta de prendas',
+      challenge: 'Una prenda cada uno por turno, hasta que alguien se raje. Quien se raje, paga.',
+      difficulty: 'dificil',
+    },
+    {
+      title: 'Susurro final',
+      challenge: 'Dile al oído cómo quieres que acabe la noche. Con detalle, no con indirectas.',
+      difficulty: 'dificil',
+    },
+    {
+      title: 'Adivina dónde',
+      challenge: 'Con los ojos cerrados, adivina dónde te está tocando. Fallas, repites.',
+      difficulty: 'dificil',
+    },
+    {
+      title: 'Puntuación',
+      challenge: 'Puntúa del 1 al 10 lo último que hicisteis y di exactamente qué le faltó.',
+      difficulty: 'dificil',
+    },
+    {
+      title: 'Reto al instante',
+      challenge: 'La otra persona se inventa un reto ahora mismo. Lo cumples antes de seguir.',
+      difficulty: 'dificil',
+    },
+    {
+      title: 'Lo más atrevido',
+      challenge: 'Cuenta lo más atrevido que has hecho en tu vida. Sin suavizarlo.',
+      difficulty: 'dificil',
+    },
+    {
+      title: 'El rincón',
+      challenge: 'Señala el rincón de la casa donde quieres seguir. Se acaba la partida ahí.',
+      difficulty: 'dificil',
+    },
+    {
+      // Conviene que salga pronto: pactar el freno de antemano es lo que
+      // permite que el resto de la baraja se juegue sin frenos.
+      title: 'Palabra de freno',
+      challenge:
+        'Acordad ahora una palabra. Quien la diga, corta el reto que sea sin dar explicaciones.',
+      difficulty: 'facil',
     },
   ],
 }
