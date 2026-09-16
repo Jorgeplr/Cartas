@@ -1,46 +1,44 @@
-import type { Difficulty } from '../lib/types'
-import { ETIQUETA_DIFICULTAD } from '../lib/types'
-import { IconoCandado, IconoDificultad } from './Icon'
+import type { Theme } from '../lib/types'
+import { ETIQUETA_TEMA, TEMATICAS } from '../lib/types'
+import { IconoCandado, IconoTema } from './Icon'
 
-interface EstiloDificultad {
+interface EstiloTema {
   borde: string
   texto: string
   barra: string
   glow: string
 }
 
-// Un color por dificultad, pero el nivel SIEMPRE lleva tambien su etiqueta:
+// Un color por tematica, pero SIEMPRE lleva tambien su etiqueta y su glifo:
 // nadie debe depender del color para entender la carta.
 //
 // Las clases van escritas enteras porque Tailwind escanea el codigo fuente:
-// una clase construida en runtime (`"text-" + nivel`) nunca llega al CSS.
-const ESTILO: Record<Difficulty, EstiloDificultad> = {
-  facil: {
-    borde: 'border-facil/70',
-    texto: 'text-facil',
-    barra: 'bg-facil',
-    glow: 'shadow-[0_0_30px_-10px_var(--color-facil)]',
+// una clase construida en runtime ("text-" + tema) nunca llega al CSS.
+const ESTILO: Record<Theme, EstiloTema> = {
+  suave: {
+    borde: 'border-tema-suave/70',
+    texto: 'text-tema-suave',
+    barra: 'bg-tema-suave',
+    glow: 'shadow-[0_0_30px_-10px_var(--color-tema-suave)]',
   },
-  medio: {
-    borde: 'border-medio/70',
-    texto: 'text-medio',
-    barra: 'bg-medio',
-    glow: 'shadow-[0_0_30px_-10px_var(--color-medio)]',
+  picante: {
+    borde: 'border-tema-picante/70',
+    texto: 'text-tema-picante',
+    barra: 'bg-tema-picante',
+    glow: 'shadow-[0_0_30px_-10px_var(--color-tema-picante)]',
   },
-  dificil: {
-    borde: 'border-dificil/70',
-    texto: 'text-dificil',
-    barra: 'bg-dificil',
-    glow: 'shadow-[0_0_30px_-10px_var(--color-dificil)]',
+  atrevida: {
+    borde: 'border-tema-atrevida/70',
+    texto: 'text-tema-atrevida',
+    barra: 'bg-tema-atrevida',
+    glow: 'shadow-[0_0_30px_-10px_var(--color-tema-atrevida)]',
   },
 }
-
-const NIVELES: Difficulty[] = ['facil', 'medio', 'dificil']
 
 interface PlayCardProps {
   title: string
   challenge: string | null
-  difficulty: Difficulty
+  theme: Theme
   /** Muestra el dorso en vez de la cara */
   faceDown?: boolean
   /** La cara se ve, pero el reto está oculto porque es de la otra persona */
@@ -63,7 +61,7 @@ interface PlayCardProps {
 export function PlayCard({
   title,
   challenge,
-  difficulty,
+  theme,
   faceDown = false,
   hidden = false,
   drawn = false,
@@ -72,7 +70,9 @@ export function PlayCard({
 }: PlayCardProps) {
   if (faceDown) return <CardBack className={className} />
 
-  const estilo = ESTILO[difficulty]
+  // Si la API manda una tematica que este build no conoce, la carta se pinta
+  // con un estilo neutro en vez de tumbar la pantalla entera.
+  const estilo = ESTILO[theme] ?? ESTILO.picante
 
   return (
     <article
@@ -84,8 +84,8 @@ export function PlayCard({
         <span
           className={`inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.14em] ${estilo.texto}`}
         >
-          <IconoDificultad nivel={difficulty} className="size-4" aria-hidden="true" />
-          {ETIQUETA_DIFICULTAD[difficulty]}
+          <IconoTema tema={theme} className="size-4" aria-hidden="true" />
+          {ETIQUETA_TEMA[theme]}
         </span>
         {drawn && (
           <span className="rounded-full border border-borde px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-tinta-suave">
@@ -129,11 +129,11 @@ export function PlayCard({
       </div>
 
       <footer className="relative flex items-center gap-1.5" aria-hidden="true">
-        {NIVELES.map((nivel, i) => (
+        {TEMATICAS.map((t, i) => (
           <span
-            key={nivel}
+            key={t}
             className={`h-1 flex-1 rounded-full ${
-              i <= NIVELES.indexOf(difficulty) ? estilo.barra : 'bg-borde'
+              i <= TEMATICAS.indexOf(theme) ? estilo.barra : 'bg-borde'
             }`}
           />
         ))}

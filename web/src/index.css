@@ -19,11 +19,11 @@
   --color-tinta: #f2eeff;
   --color-tinta-suave: #a79fc4;
 
-  /* Dificultad: cada nivel tiene color propio, pero SIEMPRE va acompanado
-     de su etiqueta de texto (nunca solo color). */
-  --color-facil: #c8ff3d;
-  --color-medio: #ffb020;
-  --color-dificil: #ff2d6b;
+  /* Tematica: cada una tiene color propio, pero SIEMPRE va acompanada de su
+     etiqueta de texto y de su glifo (nunca solo color). */
+  --color-tema-suave: #c8ff3d;
+  --color-tema-picante: #ffb020;
+  --color-tema-atrevida: #ff2d6b;
 
   --color-error: #ff5a5a;
 

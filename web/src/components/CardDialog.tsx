@@ -2,7 +2,7 @@ import { useEffect, useId, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { IconoCerrar, IconoLapiz, IconoPapelera } from './Icon'
 import { PlayCard } from './PlayCard'
-import { ETIQUETA_DIFICULTAD, type Card } from '../lib/types'
+import { ETIQUETA_TEMA, type Card } from '../lib/types'
 
 interface Props {
   carta: Card
@@ -57,7 +57,7 @@ export function CardDialog({ carta, onClose, onEdit, onDelete }: Props) {
       >
         <div className="mb-3 flex items-center justify-between gap-2">
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-tinta-suave">
-            {ETIQUETA_DIFICULTAD[carta.difficulty]}
+            {ETIQUETA_TEMA[carta.theme]}
             {carta.drawn && ' · ya jugada'}
           </p>
 
@@ -79,7 +79,7 @@ export function CardDialog({ carta, onClose, onEdit, onDelete }: Props) {
         <PlayCard
           title={carta.title}
           challenge={carta.challenge}
-          difficulty={carta.difficulty}
+          theme={carta.theme}
           hidden={carta.hidden}
           drawn={carta.drawn}
         />

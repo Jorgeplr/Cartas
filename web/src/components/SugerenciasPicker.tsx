@@ -1,37 +1,37 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { IconoDado, IconoLlama } from './Icon'
+import { TEMATICAS, type Theme } from '../lib/types'
 import {
-  DESCRIPCION_NIVEL,
-  ETIQUETA_NIVEL,
-  NIVELES,
+  DESCRIPCION_TEMA,
+  ETIQUETA_GRUPO,
   sugerenciaAlAzar,
-  type Nivel,
   type Sugerencia,
 } from '../lib/sugerencias'
 
-/** Un nivel de picante, tres llamas: el calor se lee de un vistazo. */
-const LLAMAS: Record<Nivel, number> = { suave: 1, picante: 2, atrevida: 3 }
+/** Una llama por escalon de calor: se lee de un vistazo. */
+const LLAMAS: Record<Theme, number> = { suave: 1, picante: 2, atrevida: 3 }
 
-const ACTIVO: Record<Nivel, string> = {
-  suave: 'border-facil/70 bg-facil/10 text-facil',
-  picante: 'border-medio/70 bg-medio/10 text-medio',
-  atrevida: 'border-dificil/70 bg-dificil/10 text-dificil',
+const ACTIVO: Record<Theme, string> = {
+  suave: 'border-tema-suave/70 bg-tema-suave/10 text-tema-suave',
+  picante: 'border-tema-picante/70 bg-tema-picante/10 text-tema-picante',
+  atrevida: 'border-tema-atrevida/70 bg-tema-atrevida/10 text-tema-atrevida',
 }
 
 interface Props {
   /** Títulos que ya están en el mazo, para no proponerlos otra vez */
   usadas: string[]
-  onElegir: (sugerencia: Sugerencia) => void
+  /** El grupo del que sale la sugerencia ES la tematica de la carta. */
+  onElegir: (sugerencia: Sugerencia, tema: Theme) => void
 }
 
 export function SugerenciasPicker({ usadas, onElegir }: Props) {
-  const [nivel, setNivel] = useState<Nivel | null>(null)
+  const [tema, setTema] = useState<Theme | null>(null)
   const [propuesta, setPropuesta] = useState<Sugerencia | null>(null)
 
-  function tirar(n: Nivel) {
-    setNivel(n)
-    setPropuesta(sugerenciaAlAzar(n, usadas))
+  function tirar(t: Theme) {
+    setTema(t)
+    setPropuesta(sugerenciaAlAzar(t, usadas))
   }
 
   return (
@@ -46,8 +46,8 @@ export function SugerenciasPicker({ usadas, onElegir }: Props) {
       </p>
 
       <div className="flex flex-wrap gap-2">
-        {NIVELES.map((n) => {
-          const activo = n === nivel
+        {TEMATICAS.map((n) => {
+          const activo = n === tema
 
           return (
             <button
@@ -55,7 +55,7 @@ export function SugerenciasPicker({ usadas, onElegir }: Props) {
               type="button"
               onClick={() => tirar(n)}
               aria-pressed={activo}
-              title={DESCRIPCION_NIVEL[n]}
+              title={DESCRIPCION_TEMA[n]}
               className={`inline-flex min-h-11 items-center gap-2 rounded-lg border px-3 text-sm font-bold transition-colors duration-200 ${
                 activo
                   ? ACTIVO[n]
@@ -67,14 +67,14 @@ export function SugerenciasPicker({ usadas, onElegir }: Props) {
                   <IconoLlama key={i} className="size-3.5" />
                 ))}
               </span>
-              {ETIQUETA_NIVEL[n]}
+              {ETIQUETA_GRUPO[n]}
             </button>
           )
         })}
       </div>
 
       <AnimatePresence mode="wait">
-        {propuesta && nivel && (
+        {propuesta && tema && (
           <motion.div
             key={propuesta.title}
             initial={{ opacity: 0, y: -6 }}
@@ -90,7 +90,7 @@ export function SugerenciasPicker({ usadas, onElegir }: Props) {
             <div className="mt-3 flex flex-wrap gap-2">
               <button
                 type="button"
-                onClick={() => onElegir(propuesta)}
+                onClick={() => onElegir(propuesta, tema)}
                 className="inline-flex min-h-11 items-center rounded-lg bg-lima px-4 text-sm font-bold text-noche transition-colors duration-200 hover:bg-lima/90"
               >
                 Usar esta
@@ -98,7 +98,7 @@ export function SugerenciasPicker({ usadas, onElegir }: Props) {
 
               <button
                 type="button"
-                onClick={() => tirar(nivel)}
+                onClick={() => tirar(tema)}
                 className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-borde px-4 text-sm font-bold text-tinta-suave transition-colors duration-200 hover:border-fucsia/50 hover:text-tinta"
               >
                 <IconoDado className="size-4" aria-hidden="true" />

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_29_140000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_13_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -19,9 +19,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_29_140000) do
     t.bigint "author_id", null: false
     t.text "challenge", null: false
     t.datetime "created_at", null: false
-    t.string "difficulty", default: "medio", null: false
     t.datetime "drawn_at"
     t.bigint "drawn_by_id"
+    t.string "theme", default: "picante", null: false
     t.string "title", null: false
     t.datetime "updated_at", null: false
     t.index ["author_id", "drawn_at"], name: "index_cards_on_author_id_and_drawn_at"
@@ -30,6 +30,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_29_140000) do
   end
 
   create_table "pairings", force: :cascade do |t|
+    t.string "active_themes", default: ["suave", "picante", "atrevida"], null: false, array: true
     t.datetime "created_at", null: false
     t.bigint "current_turn_user_id", null: false
     t.datetime "updated_at", null: false

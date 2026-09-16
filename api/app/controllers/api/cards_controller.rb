@@ -41,7 +41,7 @@ module Api
     end
 
     def card_params
-      params.permit(:title, :challenge, :difficulty)
+      params.permit(:title, :challenge, :theme)
     end
   end
 end

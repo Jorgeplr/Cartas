@@ -47,20 +47,20 @@ describe('CardEditor', () => {
     expect(onSave).toHaveBeenCalledWith({
       title: 'Baile',
       challenge: 'Baila 30s',
-      difficulty: 'medio',
+      theme: 'picante',
     })
   })
 
-  it('cambia la dificultad desde el segmented control', async () => {
+  it('cambia la temática desde el segmented control', async () => {
     const onSave = vi.fn()
     render(<CardEditor onSave={onSave} />)
 
     await userEvent.type(screen.getByLabelText(/^Título/), 'T')
     await userEvent.type(screen.getByLabelText('El reto'), 'C')
-    await userEvent.click(screen.getByRole('radio', { name: /difícil/i }))
+    await userEvent.click(screen.getByRole('radio', { name: /atrevida/i }))
     await userEvent.click(screen.getByRole('button', { name: /añadir al mazo/i }))
 
-    expect(onSave).toHaveBeenCalledWith(expect.objectContaining({ difficulty: 'dificil' }))
+    expect(onSave).toHaveBeenCalledWith(expect.objectContaining({ theme: 'atrevida' }))
   })
 
   it('precarga los valores cuando edita una carta existente', () => {
@@ -70,7 +70,7 @@ describe('CardEditor', () => {
           id: 1,
           title: 'Existente',
           challenge: 'Su reto',
-          difficulty: 'facil',
+          theme: 'suave',
           mine: true,
           drawn: false,
           hidden: false,
@@ -82,6 +82,6 @@ describe('CardEditor', () => {
 
     expect(screen.getByLabelText(/^Título/)).toHaveValue('Existente')
     expect(screen.getByLabelText('El reto')).toHaveValue('Su reto')
-    expect(screen.getByRole('radio', { name: /fácil/i })).toHaveAttribute('aria-checked', 'true')
+    expect(screen.getByRole('radio', { name: /suave/i })).toHaveAttribute('aria-checked', 'true')
   })
 })

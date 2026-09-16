@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useAuth } from '../auth/AuthContext'
 import { Button } from '../components/Button'
 import { CardDialog } from '../components/CardDialog'
-import { CardGrid, CardTile, ResumenDificultad } from '../components/CardGrid'
+import { CardGrid, CardTile, ResumenTematicas } from '../components/CardGrid'
 import { IconoCerrar, IconoCheck, IconoCopiar, IconoMas, IconoSalir } from '../components/Icon'
 import { api, ApiError } from '../lib/api'
 import { useCards } from '../lib/useCards'
@@ -151,7 +151,7 @@ export function Pair() {
                 Las escribes tú, las cumplirá la otra persona.
               </p>
               <div className="mt-2">
-                <ResumenDificultad cards={mias} />
+                <ResumenTematicas cards={mias} />
               </div>
             </div>
 

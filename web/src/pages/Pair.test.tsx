@@ -69,7 +69,7 @@ describe('pantalla de emparejamiento', () => {
     expect(JSON.parse(String(creacion?.[1]?.body))).toEqual({
       title: 'Karaoke',
       challenge: 'Canta el estribillo',
-      difficulty: 'medio',
+      theme: 'picante',
     })
   })
 
@@ -79,7 +79,7 @@ describe('pantalla de emparejamiento', () => {
         id: 1,
         title: 'Ya escrita',
         challenge: 'Su reto',
-        difficulty: 'facil',
+        theme: 'suave',
         mine: true,
         drawn: false,
         hidden: false,

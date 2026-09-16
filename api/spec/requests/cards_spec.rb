@@ -7,11 +7,11 @@ RSpec.describe "Cards" do
 
   def carta(author:, **attrs)
     Card.create!({ author: author, title: "T", challenge: "C",
-                   difficulty: "medio" }.merge(attrs))
+                   theme: "picante" }.merge(attrs))
   end
 
   it "crea una carta en la baraja de la pareja" do
-    post "/api/cards", params: { title: "Baile", challenge: "Baila 30s", difficulty: "facil" },
+    post "/api/cards", params: { title: "Baile", challenge: "Baila 30s", theme: "suave" },
          headers: auth_headers(ana)
 
     expect(response).to have_http_status(:created)
@@ -85,7 +85,7 @@ RSpec.describe "Cards" do
   it "permite escribir cartas antes de tener pareja" do
     sola = crear_usuario("sola@x.com")
 
-    post "/api/cards", params: { title: "Adelantada", challenge: "C", difficulty: "facil" },
+    post "/api/cards", params: { title: "Adelantada", challenge: "C", theme: "suave" },
          headers: auth_headers(sola)
 
     expect(response).to have_http_status(:created)
@@ -94,7 +94,7 @@ RSpec.describe "Cards" do
 
   it "sin pareja solo ves tus propias cartas" do
     sola = crear_usuario("sola@x.com")
-    Card.create!(author: sola, title: "Mia", challenge: "C", difficulty: "facil")
+    Card.create!(author: sola, title: "Mia", challenge: "C", theme: "suave")
 
     get "/api/cards", headers: auth_headers(sola)
 

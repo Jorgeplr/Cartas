@@ -234,7 +234,7 @@ function CartaRevelada({ carta }: { carta: Card }) {
       <PlayCard
         title={carta.title}
         challenge={carta.challenge}
-        difficulty={carta.difficulty}
+        theme={carta.theme}
       />
     </motion.div>
   )

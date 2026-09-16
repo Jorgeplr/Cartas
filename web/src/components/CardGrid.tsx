@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import { Button } from './Button'
 import { IconoLapiz, IconoMas, IconoPapelera } from './Icon'
 import { PlayCard } from './PlayCard'
-import { DIFICULTADES, ETIQUETA_DIFICULTAD, type Card, type Difficulty } from '../lib/types'
+import { ETIQUETA_TEMA, TEMATICAS, type Card, type Theme } from '../lib/types'
 
 export function CardGrid({ children }: { children: ReactNode }) {
   return (
@@ -15,27 +15,27 @@ export function CardGrid({ children }: { children: ReactNode }) {
   )
 }
 
-const PUNTO: Record<Difficulty, string> = {
-  facil: 'bg-facil',
-  medio: 'bg-medio',
-  dificil: 'bg-dificil',
+const PUNTO: Record<Theme, string> = {
+  suave: 'bg-tema-suave',
+  picante: 'bg-tema-picante',
+  atrevida: 'bg-tema-atrevida',
 }
 
-/** Cuántas cartas hay de cada nivel. Ayuda a ver si el mazo está desequilibrado
- *  antes de jugarlo, que es cuando aún puedes arreglarlo. */
-export function ResumenDificultad({ cards }: { cards: Card[] }) {
+/** Cuántas cartas hay de cada temática. Ayuda a ver si el mazo está
+ *  desequilibrado antes de jugarlo, que es cuando aún puedes arreglarlo. */
+export function ResumenTematicas({ cards }: { cards: Card[] }) {
   if (cards.length === 0) return null
 
   return (
     <ul className="flex flex-wrap gap-3">
-      {DIFICULTADES.map((nivel) => {
-        const total = cards.filter((c) => c.difficulty === nivel).length
+      {TEMATICAS.map((tema) => {
+        const total = cards.filter((c) => c.theme === tema).length
 
         return (
-          <li key={nivel} className="flex items-center gap-1.5 text-sm text-tinta-suave">
-            <span className={`size-2 rounded-full ${PUNTO[nivel]}`} aria-hidden="true" />
+          <li key={tema} className="flex items-center gap-1.5 text-sm text-tinta-suave">
+            <span className={`size-2 rounded-full ${PUNTO[tema]}`} aria-hidden="true" />
             <span className="tabular-nums">{total}</span>
-            <span>{ETIQUETA_DIFICULTAD[nivel].toLowerCase()}</span>
+            <span>{ETIQUETA_TEMA[tema].toLowerCase()}</span>
           </li>
         )
       })}
@@ -85,7 +85,7 @@ export function CardTile({
           <PlayCard
             title={carta.title}
             challenge={carta.challenge}
-            difficulty={carta.difficulty}
+            theme={carta.theme}
             hidden={carta.hidden}
             drawn={carta.drawn}
             compact
@@ -95,7 +95,7 @@ export function CardTile({
         <PlayCard
           title={carta.title}
           challenge={carta.challenge}
-          difficulty={carta.difficulty}
+          theme={carta.theme}
           hidden={carta.hidden}
           drawn={carta.drawn}
           compact

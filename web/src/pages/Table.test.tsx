@@ -10,14 +10,16 @@ import type { DeckState } from '../lib/types'
 const YO = { id: 1, email: 'ana@x.com', display_name: 'ana', invite_code: 'ABC234' }
 const PAREJA = { id: 2, display_name: 'bea' }
 
-const SESION = { user: YO, pairing: { id: 1, current_turn_user_id: 1 }, partner: PAREJA }
+const SESION = { user: YO, pairing: { id: 1, current_turn_user_id: 1, active_themes: ['suave', 'picante', 'atrevida'] }, partner: PAREJA }
 
 function mesa(overrides: Partial<DeckState> = {}): DeckState {
   return {
-    pairing: { id: 1, current_turn_user_id: 1 },
+    pairing: { id: 1, current_turn_user_id: 1, active_themes: ['suave', 'picante', 'atrevida'] },
     partner: PAREJA,
     cards_left: 3,
     cards_total: 3,
+    cards_drawn_total: 0,
+    deck_by_theme: { suave: 1, picante: 1, atrevida: 1 },
     last_play: null,
     ...overrides,
   }
@@ -73,7 +75,7 @@ describe('mesa de juego', () => {
   })
 
   it('bloquea el robo y explica por qué cuando no es tu turno', async () => {
-    servidor(mesa({ pairing: { id: 1, current_turn_user_id: 2 } }))
+    servidor(mesa({ pairing: { id: 1, current_turn_user_id: 2, active_themes: ['suave', 'picante', 'atrevida'] } }))
     pintar()
 
     expect(await screen.findByRole('button', { name: 'ROBAR' })).toBeDisabled()
@@ -83,21 +85,21 @@ describe('mesa de juego', () => {
   it('el turno llega solo cuando la otra persona roba, sin recargar', async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true })
 
-    const estado = servidor(mesa({ pairing: { id: 1, current_turn_user_id: 2 }, cards_left: 3 }))
+    const estado = servidor(mesa({ pairing: { id: 1, current_turn_user_id: 2, active_themes: ['suave', 'picante', 'atrevida'] }, cards_left: 3 }))
     pintar()
 
     expect(await screen.findByText('Le toca a bea')).toBeInTheDocument()
 
     // bea roba en su pantalla: cambia el estado del servidor, no el nuestro.
     estado.mesa = mesa({
-      pairing: { id: 1, current_turn_user_id: 1 },
+      pairing: { id: 1, current_turn_user_id: 1, active_themes: ['suave', 'picante', 'atrevida'] },
       cards_left: 2,
       last_play: {
         card: {
           id: 9,
           title: 'Karaoke',
           challenge: 'Canta el estribillo',
-          difficulty: 'medio',
+          theme: 'picante',
           mine: true,
           drawn: true,
           hidden: false,
@@ -129,7 +131,7 @@ describe('mesa de juego', () => {
             id: 9,
             title: 'Karaoke',
             challenge: 'Canta el estribillo',
-            difficulty: 'medio',
+            theme: 'picante',
             mine: true,
             drawn: true,
             hidden: false,
@@ -157,7 +159,7 @@ describe('mesa de juego', () => {
             id: 9,
             title: 'Prenda',
             challenge: 'Quítate una prenda',
-            difficulty: 'dificil',
+            theme: 'atrevida',
             mine: true,
             drawn: true,
             hidden: false,
@@ -178,13 +180,13 @@ describe('mesa de juego', () => {
   it('avisa en el título de la pestaña cuando pasa a ser tu turno', async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true })
 
-    const estado = servidor(mesa({ pairing: { id: 1, current_turn_user_id: 2 } }))
+    const estado = servidor(mesa({ pairing: { id: 1, current_turn_user_id: 2, active_themes: ['suave', 'picante', 'atrevida'] } }))
     pintar()
 
     await screen.findByText('Le toca a bea')
     expect(document.title).toBe('Cartas de Reto')
 
-    estado.mesa = mesa({ pairing: { id: 1, current_turn_user_id: 1 } })
+    estado.mesa = mesa({ pairing: { id: 1, current_turn_user_id: 1, active_themes: ['suave', 'picante', 'atrevida'] } })
     // El sondeo actualiza estado por su cuenta: act envuelve ese despertar.
     await act(async () => {
       await vi.advanceTimersByTimeAsync(3100)

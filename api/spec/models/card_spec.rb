@@ -4,11 +4,11 @@ RSpec.describe Card do
   let(:ana) { crear_usuario("ana@x.com") }
 
   def carta(**attrs)
-    Card.new({ author: ana, title: "T", challenge: "C", difficulty: "medio" }.merge(attrs))
+    Card.new({ author: ana, title: "T", challenge: "C", theme: "picante" }.merge(attrs))
   end
 
-  it "rechaza una dificultad desconocida" do
-    expect(carta(difficulty: "imposible")).not_to be_valid
+  it "rechaza una tematica desconocida" do
+    expect(carta(theme: "imposible")).not_to be_valid
   end
 
   it "rechaza retos de mas de 280 caracteres" do

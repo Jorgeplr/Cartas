@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useAuth } from '../auth/AuthContext'
 import { Button } from '../components/Button'
 import { CardDialog } from '../components/CardDialog'
-import { CardGrid, CardTile, EmptyDeck, ResumenDificultad } from '../components/CardGrid'
+import { CardGrid, CardTile, EmptyDeck, ResumenTematicas } from '../components/CardGrid'
 import { IconoCerrar, IconoMas } from '../components/Icon'
 import { useCards } from '../lib/useCards'
 import type { Card } from '../lib/types'
@@ -85,7 +85,7 @@ export function Cards() {
         <div className="flex flex-col gap-10">
           <Seccion
             titulo={`Tus cartas (${mias.length})`}
-            extra={<ResumenDificultad cards={mias} />}
+            extra={<ResumenTematicas cards={mias} />}
           >
             {mias.length === 0 ? (
               <EmptyDeck

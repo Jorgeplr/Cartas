@@ -21,8 +21,8 @@ RSpec.describe "Pairings" do
   end
 
   it "las cartas escritas antes de emparejarse entran solas a la baraja" do
-    Card.create!(author: ana, title: "Adelantada", challenge: "Reto previo", difficulty: "medio")
-    Card.create!(author: bea, title: "La suya", challenge: "Otro reto", difficulty: "facil")
+    Card.create!(author: ana, title: "Adelantada", challenge: "Reto previo", theme: "picante")
+    Card.create!(author: bea, title: "La suya", challenge: "Otro reto", theme: "suave")
 
     post "/api/pairing/join", params: { code: ana.invite_code }, headers: auth_headers(bea)
 

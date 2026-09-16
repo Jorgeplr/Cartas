@@ -1,10 +1,10 @@
 import { useState, type FormEvent } from 'react'
 import { Button } from '../components/Button'
-import { DifficultyPicker } from '../components/DifficultyPicker'
+import { ThemePicker } from '../components/ThemePicker'
 import { Field, TextAreaField } from '../components/Field'
 import { PlayCard } from '../components/PlayCard'
 import { SugerenciasPicker } from '../components/SugerenciasPicker'
-import type { Card, Difficulty } from '../lib/types'
+import type { Card, Theme } from '../lib/types'
 
 export const MAX_TITULO = 60
 export const MAX_RETO = 280
@@ -12,7 +12,7 @@ export const MAX_RETO = 280
 export interface BorradorCarta {
   title: string
   challenge: string
-  difficulty: Difficulty
+  theme: Theme
 }
 
 interface Props {
@@ -33,7 +33,7 @@ interface Props {
 export function CardEditor({ carta, usadas = [], onSave, onCancel, error }: Props) {
   const [title, setTitle] = useState(carta?.title ?? '')
   const [challenge, setChallenge] = useState(carta?.challenge ?? '')
-  const [difficulty, setDifficulty] = useState<Difficulty>(carta?.difficulty ?? 'medio')
+  const [theme, setTheme] = useState<Theme>(carta?.theme ?? 'picante')
   const [guardando, setGuardando] = useState(false)
 
   const valida =
@@ -48,7 +48,7 @@ export function CardEditor({ carta, usadas = [], onSave, onCancel, error }: Prop
 
     setGuardando(true)
     try {
-      await onSave({ title: title.trim(), challenge: challenge.trim(), difficulty })
+      await onSave({ title: title.trim(), challenge: challenge.trim(), theme })
     } finally {
       setGuardando(false)
     }
@@ -62,10 +62,10 @@ export function CardEditor({ carta, usadas = [], onSave, onCancel, error }: Prop
         {!carta && (
           <SugerenciasPicker
             usadas={usadas}
-            onElegir={(s) => {
+            onElegir={(s, tema) => {
               setTitle(s.title)
               setChallenge(s.challenge)
-              setDifficulty(s.difficulty)
+              setTheme(tema)
             }}
           />
         )}
@@ -88,7 +88,7 @@ export function CardEditor({ carta, usadas = [], onSave, onCancel, error }: Prop
           onChange={(e) => setChallenge(e.target.value)}
         />
 
-        <DifficultyPicker valor={difficulty} onChange={setDifficulty} />
+        <ThemePicker valor={theme} onChange={setTheme} />
 
         {error && (
           <p role="alert" className="text-sm font-semibold text-error">
@@ -115,7 +115,7 @@ export function CardEditor({ carta, usadas = [], onSave, onCancel, error }: Prop
         </p>
 
         <div data-testid="preview" className="mx-auto max-w-64">
-          <PlayCard title={title} challenge={challenge} difficulty={difficulty} />
+          <PlayCard title={title} challenge={challenge} theme={theme} />
         </div>
       </div>
     </form>

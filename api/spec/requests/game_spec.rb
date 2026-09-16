@@ -8,7 +8,7 @@ RSpec.describe "Game" do
   def llenar_mazo(n)
     n.times do |i|
       Card.create!(author: bea, title: "C#{i}",
-                   challenge: "Reto #{i}", difficulty: "medio")
+                   challenge: "Reto #{i}", theme: "picante")
     end
   end
 

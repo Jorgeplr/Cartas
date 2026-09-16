@@ -1,22 +1,17 @@
-import type { Difficulty } from './types'
-
-export type Nivel = 'suave' | 'picante' | 'atrevida'
+import type { Theme } from './types'
 
 export interface Sugerencia {
   title: string
   challenge: string
-  difficulty: Difficulty
 }
 
-export const NIVELES: Nivel[] = ['suave', 'picante', 'atrevida']
-
-export const ETIQUETA_NIVEL: Record<Nivel, string> = {
+export const ETIQUETA_GRUPO: Record<Theme, string> = {
   suave: 'Suaves',
   picante: 'Picantes',
   atrevida: 'Atrevidas',
 }
 
-export const DESCRIPCION_NIVEL: Record<Nivel, string> = {
+export const DESCRIPCION_TEMA: Record<Theme, string> = {
   suave: 'Para romper el hielo',
   picante: 'Sube la temperatura',
   atrevida: 'Sin red',
@@ -27,57 +22,47 @@ export const DESCRIPCION_NIVEL: Record<Nivel, string> = {
  * quedas en blanco delante del formulario, que es donde muere la mayoría de
  * mazos vacíos.
  */
-export const SUGERENCIAS: Record<Nivel, Sugerencia[]> = {
+export const SUGERENCIAS: Record<Theme, Sugerencia[]> = {
   suave: [
     {
       title: 'Karaoke',
       challenge: 'Canta el estribillo de la última canción que escuchaste, de pie.',
-      difficulty: 'facil',
     },
     {
       title: 'Imitación',
       challenge: 'Imita a alguien que los dos conozcáis hasta que adivinen quién es.',
-      difficulty: 'facil',
     },
     {
       title: 'Confesión de adolescente',
       challenge: 'Cuenta la anécdota más vergonzosa de tu adolescencia, sin adornarla.',
-      difficulty: 'facil',
     },
     {
       title: 'Acento prestado',
       challenge: 'Habla con acento extranjero hasta que salga la siguiente carta.',
-      difficulty: 'facil',
     },
     {
       title: 'Retrato exprés',
       challenge: 'Dibuja a la otra persona en 30 segundos y enséñale el resultado.',
-      difficulty: 'facil',
     },
     {
       title: 'Barra libre',
       challenge: 'Prepárale algo de beber sin preguntarle qué le apetece.',
-      difficulty: 'facil',
     },
     {
       title: 'Sin manos',
       challenge: 'Cómete lo que te den sin usar las manos.',
-      difficulty: 'medio',
     },
     {
       title: 'Estatua',
       challenge: 'Quédate completamente inmóvil un minuto, pase lo que pase a tu alrededor.',
-      difficulty: 'medio',
     },
     {
       title: 'Audio comprometido',
       challenge: 'Manda un audio cantando a la tercera persona de tu lista de chats.',
-      difficulty: 'medio',
     },
     {
       title: 'Sin la letra A',
       challenge: 'Habla durante dos minutos sin usar ni una sola palabra con la letra A.',
-      difficulty: 'medio',
     },
   ],
 
@@ -85,142 +70,114 @@ export const SUGERENCIAS: Record<Nivel, Sugerencia[]> = {
     {
       title: 'Tres cosas',
       challenge: 'Di tres cosas que te atraen de la otra persona, mirándola a los ojos.',
-      difficulty: 'medio',
     },
     {
       title: 'Masaje a ciegas',
       challenge: 'Da un masaje de un minuto donde te pidan, sin rechistar.',
-      difficulty: 'medio',
     },
     {
       title: 'Baile lento',
       challenge: 'Baila una canción lenta pegado a la otra persona, sin soltarte.',
-      difficulty: 'medio',
     },
     {
       title: 'Al oído',
       challenge: 'Susurra al oído lo que pensaste la primera vez que la viste.',
-      difficulty: 'medio',
     },
     {
       title: 'Repetición',
       challenge: 'Recread vuestro primer beso, igual que fue.',
-      difficulty: 'medio',
     },
     {
       title: 'Prenda o trago',
       challenge: 'Quítate una prenda o bebe un trago. Tú eliges.',
-      difficulty: 'dificil',
     },
     {
       title: 'Diez segundos',
       challenge: 'Un beso de diez segundos contados en voz alta, sin separaros.',
-      difficulty: 'dificil',
     },
     {
       title: 'Duelo de miradas',
       challenge: 'Sostened la mirada un minuto entero, sin hablar y sin reíros.',
-      difficulty: 'medio',
     },
     {
       title: 'Nunca lo dije',
       challenge: 'Cuenta algo que no le hayas contado a nadie que esté en esta sala.',
-      difficulty: 'dificil',
     },
     {
       title: 'Top 3',
       challenge: 'Nombra tus tres partes favoritas de la otra persona y por qué.',
-      difficulty: 'medio',
     },
     {
       title: 'Dilo en voz alta',
       challenge: 'Dile algo subido de tono, mirándola a los ojos y sin bajar la voz.',
-      difficulty: 'dificil',
     },
     {
       title: 'Lo que haría ahora',
       challenge: 'Cuéntale al oído qué te gustaría estar haciendo con ella en este momento.',
-      difficulty: 'dificil',
     },
     {
       title: 'Qué me pone',
       challenge: 'Describe con detalle qué es lo que más te gusta de ella. Nada de respuestas cortas.',
-      difficulty: 'medio',
     },
     {
       title: 'Mensaje caliente',
       challenge: 'Escríbele por chat lo que no te atreves a decirle en voz alta. Que lo lea delante de ti.',
-      difficulty: 'dificil',
     },
     {
       title: 'Dónde',
       challenge: 'Señala dónde te gustaría que te besara ahora mismo. Sin decir nada, solo señala.',
-      difficulty: 'dificil',
     },
     {
       title: 'Tres deseos',
       challenge: 'Di tres cosas que te gustaría que te hiciera esta noche.',
-      difficulty: 'dificil',
     },
     {
       title: 'Aquella vez',
       challenge: 'Cuéntale la última vez que pensaste en ella y no fue precisamente inocente.',
-      difficulty: 'dificil',
     },
     {
       title: 'Piropo sin filtro',
       challenge: 'Un piropo que jamás dirías en público. Ahora, en voz alta.',
-      difficulty: 'medio',
     },
     {
       title: 'La escena',
       challenge: 'Describe la escena que se te viene a la cabeza cuando piensas en los dos a solas.',
-      difficulty: 'dificil',
     },
     {
       title: 'Cuenta atrás',
       challenge: 'Treinta segundos diciéndole cosas al oído. No puedes callarte ni un momento.',
-      difficulty: 'dificil',
     },
     {
       title: 'Ropa',
       challenge: 'Dile qué prenda suya te gusta más y cuál preferirías que no llevara puesta.',
-      difficulty: 'medio',
     },
     {
       title: 'Sin tocar',
       challenge: 'Ponla nerviosa solo hablando. No vale tocarla, únicamente palabras.',
-      difficulty: 'dificil',
     },
     {
       title: 'Cuenta regresiva',
       challenge: 'Diez segundos mirándola a los ojos sin hacer nada. A la de cero, tú decides.',
-      difficulty: 'medio',
     },
     {
       title: 'La primera vez que',
       challenge: 'Cuenta la primera vez que pensaste en ella de una forma poco decente.',
-      difficulty: 'dificil',
     },
     {
       title: 'Dos dedos',
       challenge: 'Recorre con dos dedos el camino que más te apetezca. Sin explicar la ruta.',
-      difficulty: 'dificil',
     },
     {
       title: 'Sin manos III',
       challenge: 'Consigue que se ría o se ponga nerviosa sin usar las manos ni una vez.',
-      difficulty: 'medio',
     },
     {
       title: 'Peor idea',
       challenge: 'Propón la peor idea que se te ocurra ahora mismo. Si acepta, la hacéis.',
-      difficulty: 'dificil',
     },
     {
       title: 'Traducción libre',
       challenge: 'Dile lo que estás pensando, pero sin usar ninguna palabra directa.',
-      difficulty: 'medio',
     },
   ],
 
@@ -228,142 +185,114 @@ export const SUGERENCIAS: Record<Nivel, Sugerencia[]> = {
     {
       title: 'A ciegas',
       challenge: 'Déjate vendar los ojos dos minutos y adivina lo que te den a probar.',
-      difficulty: 'dificil',
     },
     {
       title: 'Confesión guardada',
       challenge: 'Cuenta una fantasía que nunca hayas dicho en voz alta.',
-      difficulty: 'dificil',
     },
     {
       title: 'Intercambio',
       challenge: 'Intercambia una prenda de ropa con la otra persona y quédatela puesta.',
-      difficulty: 'dificil',
     },
     {
       title: 'Hielo',
       challenge: 'Un cubo de hielo, donde te digan, hasta que se derrita del todo.',
-      difficulty: 'dificil',
     },
     {
       title: 'Sin manos II',
       challenge: 'Quítale una prenda a la otra persona sin usar las manos.',
-      difficulty: 'dificil',
     },
     {
       title: 'Verdad obligada',
       challenge: 'Responde con la verdad a la pregunta que te hagan, sea cual sea.',
-      difficulty: 'dificil',
     },
     {
       title: 'Carta blanca',
       challenge: 'La otra persona decide tu próximo reto. No puedes negarte.',
-      difficulty: 'dificil',
     },
     {
       title: 'Dos minutos',
       challenge: 'Dos minutos a solas. Lo que pase ahí lo decidís vosotros.',
-      difficulty: 'dificil',
     },
     {
       title: 'Audio para ella',
       challenge: 'Grábale un audio diciéndole lo que te gustaría hacerle. Que lo escuche delante de ti.',
-      difficulty: 'dificil',
     },
     {
       title: 'Lista de la compra',
       challenge: 'Enumera cinco cosas que quieres hacer con ella. Sin saltarte ninguna por vergüenza.',
-      difficulty: 'dificil',
     },
     {
       title: 'Mapa',
       challenge: 'Recorre con un dedo el camino que harías. Solo el dedo, y sin explicar nada.',
-      difficulty: 'dificil',
     },
     {
       title: 'Preguntas sin filtro',
       challenge: 'Tres preguntas sobre lo que le gusta en la intimidad. Tiene que responder a todas.',
-      difficulty: 'dificil',
     },
     {
       title: 'Confesión de la primera vez',
       challenge: 'Cuenta qué pensaste la primera vez que os quedasteis a solas.',
-      difficulty: 'dificil',
     },
     {
       title: 'Ella decide',
       challenge: 'Que te diga algo al oído. Tienes que hacerlo, sea lo que sea.',
-      difficulty: 'dificil',
     },
     {
       title: 'Luces fuera',
       challenge: 'Apagad todas las luces. Dos minutos a oscuras y nadie dice qué va a pasar.',
-      difficulty: 'dificil',
     },
     {
       title: 'Cámara lenta',
       challenge: 'Repetid el último beso, pero al triple de lento. Sin acelerar aunque queráis.',
-      difficulty: 'dificil',
     },
     {
       title: 'Donde tú elijas',
       challenge: 'Un beso donde la otra persona decida. Sin negociar y sin poner cara rara.',
-      difficulty: 'dificil',
     },
     {
       title: 'Mordisco',
       challenge: 'Un mordisco suave donde te señalen. Ellos eligen el sitio y la fuerza.',
-      difficulty: 'dificil',
     },
     {
       title: 'Ni una palabra',
       challenge: 'Tres minutos sin hablar. Solo manos y miradas. El primero que hable, paga.',
-      difficulty: 'dificil',
     },
     {
       title: 'Un minuto entero',
       challenge: 'Un minuto haciendo exactamente lo que te pidan, sin preguntar por qué.',
-      difficulty: 'dificil',
     },
     {
       title: 'Manos quietas',
       challenge: 'Con las manos a la espalda, deja que te quite lo que quiera. Tú no ayudas.',
-      difficulty: 'dificil',
     },
     {
       title: 'Ruleta de prendas',
       challenge: 'Una prenda cada uno por turno, hasta que alguien se raje. Quien se raje, paga.',
-      difficulty: 'dificil',
     },
     {
       title: 'Susurro final',
       challenge: 'Dile al oído cómo quieres que acabe la noche. Con detalle, no con indirectas.',
-      difficulty: 'dificil',
     },
     {
       title: 'Adivina dónde',
       challenge: 'Con los ojos cerrados, adivina dónde te está tocando. Fallas, repites.',
-      difficulty: 'dificil',
     },
     {
       title: 'Puntuación',
       challenge: 'Puntúa del 1 al 10 lo último que hicisteis y di exactamente qué le faltó.',
-      difficulty: 'dificil',
     },
     {
       title: 'Reto al instante',
       challenge: 'La otra persona se inventa un reto ahora mismo. Lo cumples antes de seguir.',
-      difficulty: 'dificil',
     },
     {
       title: 'Lo más atrevido',
       challenge: 'Cuenta lo más atrevido que has hecho en tu vida. Sin suavizarlo.',
-      difficulty: 'dificil',
     },
     {
       title: 'El rincón',
       challenge: 'Señala el rincón de la casa donde quieres seguir. Se acaba la partida ahí.',
-      difficulty: 'dificil',
     },
     {
       // Conviene que salga pronto: pactar el freno de antemano es lo que
@@ -371,17 +300,16 @@ export const SUGERENCIAS: Record<Nivel, Sugerencia[]> = {
       title: 'Palabra de freno',
       challenge:
         'Acordad ahora una palabra. Quien la diga, corta el reto que sea sin dar explicaciones.',
-      difficulty: 'facil',
     },
   ],
 }
 
 /**
- * Devuelve una sugerencia del nivel pedido, evitando las ya usadas. Si se
+ * Devuelve una sugerencia de la tematica pedida, evitando las ya usadas. Si se
  * agotan todas, vuelve a empezar: mejor repetir que dejar el botón muerto.
  */
-export function sugerenciaAlAzar(nivel: Nivel, usadas: string[]): Sugerencia {
-  const catalogo = SUGERENCIAS[nivel]
+export function sugerenciaAlAzar(tema: Theme, usadas: string[]): Sugerencia {
+  const catalogo = SUGERENCIAS[tema]
   const frescas = catalogo.filter((s) => !usadas.includes(s.title))
   const fuente = frescas.length > 0 ? frescas : catalogo
 

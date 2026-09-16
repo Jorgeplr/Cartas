@@ -1,11 +1,17 @@
-export type Difficulty = 'facil' | 'medio' | 'dificil'
+/**
+ * La tematica es el unico eje de la carta: el tono Y el nivel de calor a la
+ * vez. Antes habia dos (dificultad facil/medio/dificil y tono suave/picante/
+ * atrevida) y se pisaban, asi que se fundieron en este. El orden es de menos
+ * a mas: es la escala que ve el jugador.
+ */
+export type Theme = 'suave' | 'picante' | 'atrevida'
 
-export const DIFICULTADES: Difficulty[] = ['facil', 'medio', 'dificil']
+export const TEMATICAS: Theme[] = ['suave', 'picante', 'atrevida']
 
-export const ETIQUETA_DIFICULTAD: Record<Difficulty, string> = {
-  facil: 'Fácil',
-  medio: 'Medio',
-  dificil: 'Difícil',
+export const ETIQUETA_TEMA: Record<Theme, string> = {
+  suave: 'Suave',
+  picante: 'Picante',
+  atrevida: 'Atrevida',
 }
 
 export interface User {
@@ -23,7 +29,7 @@ export interface Partner {
 export interface Card {
   id: number
   title: string
-  difficulty: Difficulty
+  theme: Theme
   /** true si la escribiste tú */
   mine: boolean
   /** true si ya salió del mazo */
@@ -38,6 +44,8 @@ export interface Card {
 export interface Pairing {
   id: number
   current_turn_user_id: number
+  /** Que tematicas pueden salir al robar. Es de la pareja, no de cada jugador. */
+  active_themes: Theme[]
 }
 
 export interface Session {
@@ -58,8 +66,13 @@ export interface LastPlay {
 export interface DeckState {
   pairing: Pairing
   partner: Partner
+  /** Filtrados por las tematicas activas: es "lo que puede salir ahora" */
   cards_left: number
   cards_total: number
+  /** Sin filtrar: rebarajar devuelve la baraja entera */
+  cards_drawn_total: number
+  /** Cuantas cartas en mazo aporta cada tematica. Van siempre las tres claves. */
+  deck_by_theme: Record<Theme, number>
   /** null hasta que sale la primera carta, y tras rebarajar */
   last_play: LastPlay | null
 }

@@ -13,7 +13,7 @@ function carta(overrides: Partial<Card> = {}): Card {
     id: 1,
     title: 'La escena',
     challenge: RETO_LARGO,
-    difficulty: 'dificil',
+    theme: 'atrevida',
     mine: true,
     drawn: false,
     hidden: false,

@@ -1,5 +1,5 @@
 import type { SVGProps } from 'react'
-import type { Difficulty } from '../lib/types'
+import type { Theme } from '../lib/types'
 
 // Iconos SVG en trazo de 2px, nunca emoji: escalan, heredan color y se
 // controlan desde los tokens de diseño.
@@ -98,9 +98,9 @@ export function IconoSalir(props: IconProps) {
   )
 }
 
-/** Un glifo distinto por nivel: la dificultad no se distingue solo por color. */
-export function IconoDificultad({ nivel, ...props }: IconProps & { nivel: Difficulty }) {
-  if (nivel === 'facil') {
+/** Un glifo distinto por tematica: no se distingue solo por color. */
+export function IconoTema({ tema, ...props }: IconProps & { tema: Theme }) {
+  if (tema === 'suave') {
     return (
       <Svg {...props}>
         <circle cx="12" cy="12" r="7" />
@@ -108,7 +108,7 @@ export function IconoDificultad({ nivel, ...props }: IconProps & { nivel: Diffic
     )
   }
 
-  if (nivel === 'medio') {
+  if (tema === 'picante') {
     return (
       <Svg {...props}>
         <path d="M12 4 20 19H4Z" />

@@ -62,7 +62,7 @@ describe('guards de rutas', () => {
   it('deja entrar a la mesa cuando hay sesión y pareja', async () => {
     pintar({
       user: USUARIO,
-      pairing: { id: 1, current_turn_user_id: 1 },
+      pairing: { id: 1, current_turn_user_id: 1, active_themes: ['suave', 'picante', 'atrevida'] },
       partner: { id: 2, display_name: 'bea' },
     })
 
@@ -73,7 +73,7 @@ describe('guards de rutas', () => {
     setToken('token-valido')
     simularMe({
       user: USUARIO,
-      pairing: { id: 1, current_turn_user_id: 1 },
+      pairing: { id: 1, current_turn_user_id: 1, active_themes: ['suave', 'picante', 'atrevida'] },
       partner: { id: 2, display_name: 'bea' },
     })
 
