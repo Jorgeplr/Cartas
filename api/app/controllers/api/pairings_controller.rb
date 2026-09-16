@@ -7,6 +7,27 @@ module Api
       render json: PairingSerializer.call(pairing, current_user)
     end
 
+    # El filtro de tematicas es de la pareja, no de cada jugador: lo cambia
+    # cualquiera de los dos, en cualquier turno, y al otro le llega solo con el
+    # sondeo de la mesa.
+    def update_themes
+      pairing = current_user.pairing
+      return render_error(:not_found, "no_pairing", "Aun no tienes pareja") unless pairing
+
+      themes = Array(params[:themes]).map(&:to_s).uniq
+
+      unless themes.any? && (themes - Card::TEMATICAS).empty?
+        return render_error(:unprocessable_entity, "invalid_themes",
+                            "Elige al menos una tematica valida")
+      end
+
+      pairing.update!(active_themes: themes)
+
+      # Se devuelve la mesa entera, no solo las tematicas: los recuentos acaban
+      # de cambiar con el filtro y pedirlos aparte dejaria un parpadeo.
+      render json: PairingSerializer.call(pairing, current_user)
+    end
+
     def join
       code = params[:code].to_s.strip.upcase
       other = User.find_by(invite_code: code)

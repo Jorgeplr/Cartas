@@ -7,8 +7,9 @@ Rails.application.routes.draw do
 
     get  "me", to: "me#show"
 
-    get  "pairing",      to: "pairings#show"
-    post "pairing/join", to: "pairings#join"
+    get   "pairing",        to: "pairings#show"
+    post  "pairing/join",   to: "pairings#join"
+    patch "pairing/themes", to: "pairings#update_themes"
 
     resources :cards, only: [:index, :create, :update, :destroy]
 

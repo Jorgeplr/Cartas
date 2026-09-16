@@ -8,7 +8,7 @@ module CardSerializer
     {
       id: card.id,
       title: card.title,
-      difficulty: card.difficulty,
+      theme: card.theme,
       mine: mine,
       drawn: card.drawn?,
       hidden: !visible,
