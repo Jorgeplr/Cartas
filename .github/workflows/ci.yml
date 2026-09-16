@@ -1,0 +1,111 @@
+# Lo que este fichero existe para impedir:
+#
+# El 13 de septiembre un commit renombro `difficulty` a `theme` en la API y no
+# toco el frontend. La suite de RSpec quedo en rojo ese mismo dia (los specs
+# creaban cartas con una columna que ya no existia) y nadie se entero, porque
+# nada ejecutaba los tests. Lo siguiente que paso fue una pantalla blanca en
+# produccion.
+#
+# Los dos trabajos corren SIEMPRE, tambien cuando el cambio parece de un solo
+# lado: el fallo de aquel dia fue justamente un cambio "solo de backend".
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Un push nuevo sobre la misma rama cancela el anterior: interesa el resultado
+# del ultimo commit, no el de la cola.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  web:
+    name: Frontend
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          # La misma que usa web/Dockerfile: que CI pruebe otra version que la
+          # que se despliega solo sirve para tener dos verdades.
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Instalar dependencias
+        working-directory: web
+        run: npm ci
+
+      - name: Estilo
+        working-directory: web
+        run: npm run lint
+
+      - name: Tests
+        working-directory: web
+        run: npm test
+
+      # `npm run build` es `tsc -b && vite build`, asi que aqui entra tambien
+      # el typecheck. Y es el comando exacto que corre el despliegue: si pasa
+      # aqui, el contenedor de produccion se construye.
+      - name: Build de produccion
+        working-directory: web
+        run: npm run build
+
+  api:
+    name: Backend
+    runs-on: ubuntu-latest
+
+    services:
+      db:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 3s
+          --health-timeout 3s
+          --health-retries 20
+
+    env:
+      # config/database.yml deriva la URL de test sustituyendo el sufijo
+      # `_development` por `_test`, asi que esta URL TIENE que acabar en
+      # `_development` o los tests correrian contra la base de desarrollo.
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/cartas_development
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          working-directory: api
+          # Sin `ruby-version`: lo lee de api/.ruby-version, que ya es la
+          # fuente de verdad del proyecto.
+          bundler-cache: true
+
+      # db/schema.rb es generado, pero se commitea, y se habia quedado atras
+      # respecto a las migraciones sin que nada lo detectara. Migrar desde cero
+      # y exigir que el fichero no cambie es lo que mantiene las dos cosas
+      # juntas.
+      - name: El schema refleja las migraciones
+        working-directory: api
+        env:
+          RAILS_ENV: test
+        run: |
+          bin/rails db:create db:migrate
+          git diff --exit-code db/schema.rb
+
+      # Estilo, auditoria de gemas y tests. Lo que hace bin/ci se define en
+      # api/config/ci.rb, no aqui: asi correr CI en local y en GitHub es el
+      # mismo comando y no pueden separarse.
+      - name: bin/ci
+        working-directory: api
+        run: bin/ci
