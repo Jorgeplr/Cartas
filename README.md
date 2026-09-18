@@ -30,10 +30,15 @@ aplican solas con cada `docker compose up`. No hay paso manual.
 3. En **Mazo**, cada quien escribe sus cartas: título, reto y dificultad. Ahí
    mismo puedes **banear hasta 4 cartas ajenas** por partida para que no
    salgan en la baraja: es secreto, la otra persona no sabe cuáles baneaste,
-   solo que ya no pueden tocarle. Se resetea al rebarajar.
+   solo que ya no pueden tocarle. También puedes elegir una carta propia
+   sin jugar como tu **comodín**: queda reservada, fuera del azar, hasta
+   que decidas jugarla en tu turno. Ambos se resetean al rebarajar.
 4. En **Mesa**, se roba por turnos. Sale una carta al azar y la cumple quien la
-   robó. **Reiniciar mazo** devuelve todas las jugadas cuando queráis, no solo
-   al agotarse la baraja (y también reinicia los baneos: partida nueva).
+   robó. Si elegiste comodín, en tu turno puedes jugarlo en vez de robar: sale
+   la carta que reservaste, garantizada, sin importar si el mazo compartido
+   está vacío. Solo uno por partida. **Reiniciar mazo** devuelve todas las
+   jugadas cuando queráis, no solo al agotarse la baraja (y también reinicia
+   baneos y comodín: partida nueva).
 5. En **PPT**, si no os queréis complicar, echáis un piedra, papel o tijera:
    cada quien elige desde su propio dispositivo, sin ver la jugada ajena hasta
    que ambos han elegido.
@@ -41,8 +46,8 @@ aplican solas con cada `docker compose up`. No hay paso manual.
 ## Tests
 
 ```bash
-docker compose run --rm -e RAILS_ENV=test api bundle exec rspec   # 66 ejemplos
-docker compose run --rm web npx vitest run                        # 68 tests
+docker compose run --rm -e RAILS_ENV=test api bundle exec rspec   # 89 ejemplos
+docker compose run --rm web npx vitest run                        # 81 tests
 docker compose run --rm web npx tsc -b --noEmit                   # typecheck
 ```
 
@@ -68,6 +73,10 @@ Todo bajo `/api`, JSON, con `Authorization: Bearer <jwt>` salvo signup y login.
 | POST | `/deck/reshuffle` | Devuelve todas las cartas al mazo |
 | GET | `/rps` | Estado de la ronda de piedra, papel o tijera |
 | POST | `/rps/choose` | Elige piedra, papel o tijera para la ronda actual |
+| GET | `/wildcard` | Tu comodín de esta partida (elegido, jugado o ninguno) |
+| POST | `/wildcard` | Elige (o reemplaza) una carta propia como comodín |
+| DELETE | `/wildcard` | Cancela la elección, si no se ha jugado |
+| POST | `/wildcard/play` | Juega el comodín en tu turno: sale garantizado, en vez de robar al azar |
 
 Los errores siempre tienen la misma forma:
 

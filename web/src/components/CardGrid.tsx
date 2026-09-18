@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { motion } from 'framer-motion'
 import { Button } from './Button'
-import { IconoLapiz, IconoMas, IconoPapelera, IconoProhibido } from './Icon'
+import { IconoComodin, IconoLapiz, IconoMas, IconoPapelera, IconoProhibido } from './Icon'
 import { PlayCard } from './PlayCard'
 import { ETIQUETA_TEMA, TEMATICAS, type Card, type Theme } from '../lib/types'
 
@@ -57,6 +57,9 @@ export function CardTile({
   onBan,
   onUnban,
   quedanBaneos,
+  onSetWildcard,
+  onClearWildcard,
+  comodinJugado,
 }: {
   carta: Card
   indice: number
@@ -69,12 +72,19 @@ export function CardTile({
   onUnban?: (carta: Card) => void
   /** Cuántos de tus 4 baneos te quedan libres. Sin esto no se sabe si el botón debe estar activo. */
   quedanBaneos?: number
+  /** Solo tiene sentido en cartas propias: el comodín siempre es tuyo. */
+  onSetWildcard?: (carta: Card) => void
+  onClearWildcard?: (carta: Card) => void
+  /** Ya jugaste tu comodín esta partida (en otra carta): no puedes elegir uno nuevo hasta rebarajar. */
+  comodinJugado?: boolean
 }) {
   // Tus cartas se editan siempre, tambien las ya jugadas: el mazo se rebaraja
   // y se vuelve a jugar, asi que una errata o un reto flojo siguen importando.
   const editable = carta.mine
   // Banear una carta ya jugada no tiene sentido: ya salio, ya se sabe que decia.
   const baneable = !carta.mine && !carta.drawn && (onBan || onUnban)
+  // Elegir comodín tampoco: una vez jugada, ya no hay nada que reservar.
+  const comodinable = carta.mine && !carta.drawn && (onSetWildcard || onClearWildcard)
 
   return (
     <motion.div
@@ -161,6 +171,32 @@ export function CardTile({
             >
               <IconoProhibido className="size-4" aria-hidden="true" />
               Banear
+            </button>
+          )}
+        </div>
+      )}
+
+      {comodinable && (
+        <div className="mt-2">
+          {carta.is_my_wildcard ? (
+            <button
+              type="button"
+              onClick={() => onClearWildcard?.(carta)}
+              className="inline-flex min-h-11 w-full items-center justify-center gap-1.5 rounded-lg border border-lima/60 bg-lima/10 text-sm font-semibold text-lima transition-colors duration-200 hover:bg-lima/15"
+            >
+              <IconoComodin className="size-4" aria-hidden="true" />
+              Tu comodín
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => onSetWildcard?.(carta)}
+              disabled={comodinJugado}
+              title={comodinJugado ? 'Ya jugaste tu comodín en esta partida' : undefined}
+              className="inline-flex min-h-11 w-full items-center justify-center gap-1.5 rounded-lg border border-borde text-sm text-tinta-suave transition-colors duration-200 hover:border-lima/60 hover:text-lima disabled:pointer-events-none disabled:opacity-50"
+            >
+              <IconoComodin className="size-4" aria-hidden="true" />
+              Usar como comodín
             </button>
           )}
         </div>

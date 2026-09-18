@@ -18,6 +18,7 @@ function carta(overrides: Partial<Card> = {}): Card {
     drawn: false,
     hidden: false,
     banned_by_me: false,
+    is_my_wildcard: false,
     created_at: '2026-08-30T00:00:00Z',
     ...overrides,
   }
@@ -129,5 +130,47 @@ describe('CardDialog', () => {
       />,
     )
     expect(screen.queryByRole('button', { name: /banear/i })).not.toBeInTheDocument()
+  })
+
+  it('ofrece usar como comodín una carta propia sin jugar', async () => {
+    const onSetWildcard = vi.fn()
+    render(<CardDialog carta={carta()} onClose={vi.fn()} onSetWildcard={onSetWildcard} />)
+
+    await userEvent.click(screen.getByRole('button', { name: /usar como comodín/i }))
+    expect(onSetWildcard).toHaveBeenCalledWith(carta())
+  })
+
+  it('deja quitar el comodín ya elegido', async () => {
+    const onClearWildcard = vi.fn()
+    render(
+      <CardDialog
+        carta={carta({ is_my_wildcard: true })}
+        onClose={vi.fn()}
+        onClearWildcard={onClearWildcard}
+      />,
+    )
+
+    await userEvent.click(screen.getByRole('button', { name: /tu comodín/i }))
+    expect(onClearWildcard).toHaveBeenCalled()
+  })
+
+  it('deshabilita elegir comodín si ya jugaste el de esta partida', () => {
+    render(
+      <CardDialog carta={carta()} onClose={vi.fn()} onSetWildcard={vi.fn()} comodinJugado />,
+    )
+
+    expect(screen.getByRole('button', { name: /usar como comodín/i })).toBeDisabled()
+  })
+
+  it('no ofrece comodín en cartas ajenas ni en las ya jugadas', () => {
+    const { rerender } = render(
+      <CardDialog carta={carta({ mine: false })} onClose={vi.fn()} onSetWildcard={vi.fn()} />,
+    )
+    expect(screen.queryByRole('button', { name: /comodín/i })).not.toBeInTheDocument()
+
+    rerender(
+      <CardDialog carta={carta({ drawn: true })} onClose={vi.fn()} onSetWildcard={vi.fn()} />,
+    )
+    expect(screen.queryByRole('button', { name: /comodín/i })).not.toBeInTheDocument()
   })
 })

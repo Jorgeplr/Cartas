@@ -30,7 +30,10 @@ module PairingSerializer
         drawn_by: UserSerializer.partner(ultima.drawn_by),
         drawn_by_me: ultima.drawn_by_id == viewer.id,
         drawn_at: ultima.drawn_at
-      }
+      },
+      # El tuyo, nunca el de la otra persona: cada quien juega el suyo desde
+      # su propia mesa, no hay nada ajeno que enseñar aqui.
+      wildcard: WildcardSerializer.call(viewer.wildcards.order(created_at: :desc).first, viewer)
     }
   end
 

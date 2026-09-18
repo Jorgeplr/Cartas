@@ -32,20 +32,23 @@ module Api
       # que sale ahora, no que se borra. Si luego se enciende otra tematica, sus
       # cartas tienen que estar ahi.
       current_pairing.cards.update_all(drawn_at: nil, drawn_by_id: nil)
-      # Rebarajar es el inicio de una partida nueva: ambos recuperan sus 4 baneos.
+      # Rebarajar es el inicio de una partida nueva: ambos recuperan sus 4
+      # baneos y vuelven a poder elegir comodin.
       current_pairing.clear_bans!
+      current_pairing.clear_wildcards!
       render json: { cards_left: current_pairing.playable_cards.count }
     end
 
     private
 
     # "No quedan cartas" a secas seria mentira cuando la baraja esta llena y lo
-    # que esta vacio es el filtro (tematicas apagadas o baneos): el jugador se
-    # quedaria mirando un boton apagado sin saber que hay algo que tocar.
+    # que esta vacio es el filtro (tematicas apagadas, baneos o comodines
+    # reservados): el jugador se quedaria mirando un boton apagado sin saber
+    # que hay algo que tocar.
     def render_deck_empty
       if current_pairing.cards.in_deck.exists?
         render_error(:unprocessable_entity, "no_playable_cards",
-                     "No quedan cartas jugables: revisa las tematicas activas y los baneos")
+                     "No quedan cartas jugables ahora mismo")
       else
         render_error(:unprocessable_entity, "empty_deck",
                      "No quedan cartas en el mazo")

@@ -21,6 +21,7 @@ function mesa(overrides: Partial<DeckState> = {}): DeckState {
     cards_drawn_total: 0,
     deck_by_theme: { suave: 1, picante: 1, atrevida: 1 },
     last_play: null,
+    wildcard: { chosen: false, played: false, card: null },
     ...overrides,
   }
 }
@@ -104,6 +105,7 @@ describe('mesa de juego', () => {
           drawn: true,
           hidden: false,
           banned_by_me: false,
+          is_my_wildcard: false,
           created_at: '2026-08-29T00:00:00Z',
         },
         drawn_by: PAREJA,
@@ -137,6 +139,7 @@ describe('mesa de juego', () => {
             drawn: true,
             hidden: false,
             banned_by_me: false,
+            is_my_wildcard: false,
             created_at: '2026-08-29T00:00:00Z',
           },
           drawn_by: PAREJA,
@@ -166,6 +169,7 @@ describe('mesa de juego', () => {
             drawn: true,
             hidden: false,
             banned_by_me: false,
+            is_my_wildcard: false,
             created_at: '2026-08-29T00:00:00Z',
           },
           drawn_by: null,
@@ -255,5 +259,84 @@ describe('mesa de juego', () => {
       'href',
       '/cards',
     )
+  })
+
+  const CARTA_COMODIN = {
+    id: 7,
+    title: 'Mi comodín',
+    challenge: 'Reto reservado',
+    theme: 'picante' as const,
+    mine: true,
+    drawn: false,
+    hidden: false,
+    banned_by_me: false,
+    is_my_wildcard: true,
+    created_at: '2026-09-19T00:00:00Z',
+  }
+
+  it('ofrece jugar el comodín elegido, aunque el mazo esté vacío', async () => {
+    servidor(
+      mesa({
+        cards_left: 0,
+        cards_total: 0,
+        wildcard: { chosen: true, played: false, card: CARTA_COMODIN },
+      }),
+    )
+    pintar()
+
+    expect(
+      await screen.findByRole('button', { name: /jugar comodín: mi comodín/i }),
+    ).toBeEnabled()
+  })
+
+  it('bloquea jugar el comodín cuando no es tu turno', async () => {
+    servidor(
+      mesa({
+        pairing: { id: 1, current_turn_user_id: 2, active_themes: ['suave', 'picante', 'atrevida'] },
+        wildcard: { chosen: true, played: false, card: CARTA_COMODIN },
+      }),
+    )
+    pintar()
+
+    expect(await screen.findByRole('button', { name: /jugar comodín/i })).toBeDisabled()
+  })
+
+  it('no ofrece jugar el comodín si ya se jugó o no se ha elegido ninguno', async () => {
+    servidor(mesa({ wildcard: { chosen: true, played: true, card: CARTA_COMODIN } }))
+    pintar()
+
+    await screen.findByRole('button', { name: 'ROBAR' })
+    expect(screen.queryByRole('button', { name: /jugar comodín/i })).not.toBeInTheDocument()
+  })
+
+  it('jugar el comodín llama a /wildcard/play y revela la carta', async () => {
+    const estado = { mesa: mesa({ wildcard: { chosen: true, played: false, card: CARTA_COMODIN } }), llamadas: [] as [string, RequestInit | undefined][] }
+
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (url: string, init?: RequestInit) => {
+        estado.llamadas.push([url, init])
+        if (url.endsWith('/me')) return json(SESION)
+        if (url.endsWith('/pairing')) return json(estado.mesa)
+        if (url.endsWith('/wildcard/play') && init?.method === 'POST') {
+          return json({ card: CARTA_COMODIN, cards_left: 3, current_turn_user_id: 2 })
+        }
+        return json({})
+      }),
+    )
+
+    pintar()
+
+    await userEvent.click(await screen.findByRole('button', { name: /jugar comodín/i }))
+
+    await waitFor(() => {
+      expect(
+        estado.llamadas.find(([url, init]) => url.endsWith('/wildcard/play') && init?.method === 'POST'),
+      ).toBeDefined()
+    })
+    // La carta revelada vive en su propia animación (AnimatePresence); lo que
+    // importa aquí es que la petición se hizo y el turno dejó de estar "en
+    // curso": el botón de ROBAR vuelve a ofrecer "Siguiente" en su lugar.
+    expect(await screen.findByRole('button', { name: 'Siguiente' })).toBeInTheDocument()
   })
 })

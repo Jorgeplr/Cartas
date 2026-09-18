@@ -40,6 +40,8 @@ export interface Card {
   challenge: string | null
   /** true si TÚ baneaste esta carta ajena. Nunca dice si la baneó la otra persona: eso es secreto. */
   banned_by_me: boolean
+  /** El comodín elegido (o ya jugado) por ti en esta partida. Siempre una carta propia. */
+  is_my_wildcard: boolean
   created_at: string
 }
 
@@ -80,12 +82,21 @@ export interface DeckState {
   deck_by_theme: Record<Theme, number>
   /** null hasta que sale la primera carta, y tras rebarajar */
   last_play: LastPlay | null
+  /** Tu comodín de esta partida. Nunca el de la otra persona. */
+  wildcard: WildcardState
 }
 
 export interface DrawResult {
   card: Card
   cards_left: number
   current_turn_user_id: number
+}
+
+export interface WildcardState {
+  chosen: boolean
+  /** true si ya lo jugaste: no puedes elegir otro hasta rebarajar. */
+  played: boolean
+  card: Card | null
 }
 
 export type RpsChoice = 'piedra' | 'papel' | 'tijera'

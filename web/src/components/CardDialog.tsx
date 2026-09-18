@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef } from 'react'
 import { motion } from 'framer-motion'
-import { IconoCerrar, IconoLapiz, IconoPapelera, IconoProhibido } from './Icon'
+import { IconoCerrar, IconoComodin, IconoLapiz, IconoPapelera, IconoProhibido } from './Icon'
 import { PlayCard } from './PlayCard'
 import { ETIQUETA_TEMA, type Card } from '../lib/types'
 
@@ -12,6 +12,9 @@ interface Props {
   onBan?: (carta: Card) => void
   onUnban?: (carta: Card) => void
   quedanBaneos?: number
+  onSetWildcard?: (carta: Card) => void
+  onClearWildcard?: (carta: Card) => void
+  comodinJugado?: boolean
 }
 
 /**
@@ -19,7 +22,18 @@ interface Props {
  * la rejilla, y funciona con cualquier carta: las ya jugadas no tienen botones
  * de editar, así que sin esto no habia forma de leerlas.
  */
-export function CardDialog({ carta, onClose, onEdit, onDelete, onBan, onUnban, quedanBaneos }: Props) {
+export function CardDialog({
+  carta,
+  onClose,
+  onEdit,
+  onDelete,
+  onBan,
+  onUnban,
+  quedanBaneos,
+  onSetWildcard,
+  onClearWildcard,
+  comodinJugado,
+}: Props) {
   const tituloId = useId()
   const cerrarRef = useRef<HTMLButtonElement>(null)
 
@@ -38,6 +52,7 @@ export function CardDialog({ carta, onClose, onEdit, onDelete, onBan, onUnban, q
   // y se vuelve a jugar, asi que una errata o un reto flojo siguen importando.
   const editable = carta.mine
   const baneable = !carta.mine && !carta.drawn && (onBan || onUnban)
+  const comodinable = carta.mine && !carta.drawn && (onSetWildcard || onClearWildcard)
 
   return (
     <motion.div
@@ -137,6 +152,32 @@ export function CardDialog({ carta, onClose, onEdit, onDelete, onBan, onUnban, q
               >
                 <IconoProhibido className="size-4" aria-hidden="true" />
                 Banear{quedanBaneos != null && ` (te quedan ${quedanBaneos})`}
+              </button>
+            )}
+          </div>
+        )}
+
+        {comodinable && (
+          <div className="mt-3">
+            {carta.is_my_wildcard ? (
+              <button
+                type="button"
+                onClick={() => onClearWildcard?.(carta)}
+                className="inline-flex min-h-11 w-full items-center justify-center gap-1.5 rounded-lg border border-lima/60 bg-lima/10 text-sm font-bold text-lima transition-colors duration-200 hover:bg-lima/15"
+              >
+                <IconoComodin className="size-4" aria-hidden="true" />
+                Tu comodín · quitar
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => onSetWildcard?.(carta)}
+                disabled={comodinJugado}
+                title={comodinJugado ? 'Ya jugaste tu comodín en esta partida' : undefined}
+                className="inline-flex min-h-11 w-full items-center justify-center gap-1.5 rounded-lg border border-borde text-sm font-bold text-tinta-suave transition-colors duration-200 hover:border-lima/60 hover:text-lima disabled:pointer-events-none disabled:opacity-50"
+              >
+                <IconoComodin className="size-4" aria-hidden="true" />
+                Usar como comodín
               </button>
             )}
           </div>

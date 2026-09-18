@@ -21,5 +21,10 @@ Rails.application.routes.draw do
 
     get  "rps",        to: "rps#show"
     post "rps/choose", to: "rps#choose"
+
+    get    "wildcard",      to: "wildcard#show"
+    post   "wildcard",      to: "wildcard#set"
+    delete "wildcard",      to: "wildcard#destroy"
+    post   "wildcard/play", to: "wildcard#play"
   end
 end

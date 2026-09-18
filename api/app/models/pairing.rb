@@ -21,11 +21,15 @@ class Pairing < ApplicationRecord
   # se acordara de filtrar por su cuenta, antes o despues uno se olvidaria y
   # saldria una carta de una tematica apagada.
   #
-  # Los baneos se restan igual que el filtro de tematicas: son otra forma de
-  # decir "esto no puede salir ahora", asi que cuentan para los dos mismos
-  # sitios y con la misma regla.
+  # Los baneos y los comodines reservados se restan igual que el filtro de
+  # tematicas: son otra forma de decir "esto no puede salir ahora", asi que
+  # cuentan para los dos mismos sitios y con la misma regla. Un comodin ya
+  # jugado NO se resta aqui: su carta ya salio del mazo (drawn_at), asi que
+  # el scope in_deck ya la excluye por su cuenta.
   def playable_cards
-    cards.where(theme: active_themes).where.not(id: CardBan.where(banned_by_id: [user_a_id, user_b_id]).select(:card_id))
+    cards.where(theme: active_themes)
+         .where.not(id: CardBan.where(banned_by_id: miembros_ids).select(:card_id))
+         .where.not(id: Wildcard.active.where(chosen_by_id: miembros_ids).select(:card_id))
   end
 
   def other_than(user)
@@ -40,10 +44,20 @@ class Pairing < ApplicationRecord
   # Tambien se llama al terminar el emparejamiento, para que no sobrevivan
   # a una pareja distinta si estas dos personas vuelven a emparejarse.
   def clear_bans!
-    CardBan.where(banned_by_id: [user_a_id, user_b_id]).delete_all
+    CardBan.where(banned_by_id: miembros_ids).delete_all
+  end
+
+  # Misma logica que clear_bans!, pero para el comodin: partida nueva es
+  # tambien la unica forma de volver a elegir uno despues de jugarlo.
+  def clear_wildcards!
+    Wildcard.where(chosen_by_id: miembros_ids).delete_all
   end
 
   private
+
+  def miembros_ids
+    [user_a_id, user_b_id]
+  end
 
   # Sin ninguna tematica activa el mazo quedaria vacio para siempre y nada en
   # la pantalla explicaria por que. Al menos una, y todas conocidas.

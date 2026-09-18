@@ -122,4 +122,23 @@ RSpec.describe "Game" do
 
     expect(CardBan.count).to eq(0)
   end
+
+  it "la carta reservada como comodin no puede salir al robar al azar" do
+    mia = Card.create!(author: ana, title: "Mia", challenge: "C", theme: "picante")
+    Wildcard.create!(chosen_by: ana, card: mia)
+
+    post "/api/draw", headers: auth_headers(ana)
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(json[:error][:code]).to eq("no_playable_cards")
+  end
+
+  it "rebarajar reinicia tambien el comodin de la partida" do
+    mia = Card.create!(author: ana, title: "Mia", challenge: "C", theme: "picante")
+    Wildcard.create!(chosen_by: ana, card: mia)
+
+    post "/api/deck/reshuffle", headers: auth_headers(ana)
+
+    expect(Wildcard.count).to eq(0)
+  end
 end

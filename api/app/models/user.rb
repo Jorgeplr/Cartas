@@ -3,6 +3,7 @@ class User < ApplicationRecord
 
   has_many :cards, foreign_key: :author_id, dependent: :destroy, inverse_of: :author
   has_many :card_bans, foreign_key: :banned_by_id, dependent: :destroy, inverse_of: :banned_by
+  has_many :wildcards, foreign_key: :chosen_by_id, dependent: :destroy, inverse_of: :chosen_by
 
   # Un codigo que se dicta en voz alta no puede ser ambiguo: fuera los digitos
   # 0 y 1, y fuera tambien las letras O e I que se confunden con ellos.

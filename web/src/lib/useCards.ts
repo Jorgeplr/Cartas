@@ -13,13 +13,18 @@ export function useCards() {
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
+  // Devuelve las cartas recien cargadas: elegir/cancelar comodín las
+  // necesita para saber cómo queda la carta que se está mostrando en el
+  // diálogo, sin esperar al siguiente render.
   const cargar = useCallback(async () => {
     try {
       const { cards } = await api.get<{ cards: Card[] }>('/cards')
       setCards(cards)
       setError(null)
+      return cards
     } catch (err) {
       setError(mensaje(err, 'No pudimos cargar el mazo.'))
+      return undefined
     } finally {
       setCargando(false)
     }
@@ -97,13 +102,55 @@ export function useCards() {
     }
   }, [])
 
+  // Elegir uno nuevo desmarca el anterior (una carta DISTINTA), así que la
+  // única forma fiable de refrescar todas las banderas `is_my_wildcard` a la
+  // vez es recargar el mazo entero en vez de parchear una sola carta.
+  const elegirComodin = useCallback(
+    async (carta: Card) => {
+      setError(null)
+
+      try {
+        await api.post('/wildcard', { card_id: carta.id })
+        const frescas = await cargar()
+        return frescas?.find((c) => c.id === carta.id)
+      } catch (err) {
+        setError(mensaje(err, 'No pudimos elegir el comodín.'))
+        return undefined
+      }
+    },
+    [cargar],
+  )
+
+  // `carta` es opcional: solo hace falta cuando quien cancela lo hace desde
+  // el diálogo de una carta concreta y necesita su versión refrescada.
+  const cancelarComodin = useCallback(
+    async (carta?: Card) => {
+      setError(null)
+
+      try {
+        await api.del('/wildcard')
+        const frescas = await cargar()
+        return carta ? frescas?.find((c) => c.id === carta.id) : undefined
+      } catch (err) {
+        setError(mensaje(err, 'No pudimos quitar el comodín.'))
+        return undefined
+      }
+    },
+    [cargar],
+  )
+
   const suyas = cards.filter((c) => !c.mine)
+  const mias = cards.filter((c) => c.mine)
+  const comodin = mias.find((c) => c.is_my_wildcard)
 
   return {
     cards,
-    mias: cards.filter((c) => c.mine),
+    mias,
     suyas,
     baneosUsados: suyas.filter((c) => c.banned_by_me).length,
+    comodin,
+    // Sin comodín elegido todavía, `comodin` es undefined: no hay nada jugado.
+    comodinJugado: comodin?.drawn ?? false,
     cargando,
     error,
     recargar: cargar,
@@ -111,6 +158,8 @@ export function useCards() {
     borrar,
     banear,
     desbanear,
+    elegirComodin,
+    cancelarComodin,
   }
 }
 

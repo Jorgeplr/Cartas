@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
 import { Button } from '../components/Button'
 import { Deck, type EstadoMazo } from '../components/Deck'
-import { IconoBarajar, IconoMas } from '../components/Icon'
+import { IconoBarajar, IconoComodin, IconoMas } from '../components/Icon'
 import { PlayCard } from '../components/PlayCard'
 import { api, ApiError } from '../lib/api'
 import { useDeckSync } from '../lib/useDeckSync'
@@ -37,13 +37,16 @@ export function Table() {
 
   useAvisoDeTurno(miTurno, Boolean(deck))
 
-  async function robar() {
+  /** Roba al azar y jugar el comodín comparten el mismo gesto: barajar,
+   *  esperar a que se vea entero y revelar lo que salió. Solo cambia el
+   *  endpoint y qué decir si falla. */
+  async function resolverTurno(endpoint: string, mensajeError: string) {
     setErrorAccion(null)
     setRobando(true)
     setEstadoMazo('barajando')
 
     try {
-      const resultado = await api.post<DrawResult>('/draw')
+      const resultado = await api.post<DrawResult>(endpoint)
 
       // La barajada se ve entera aunque el servidor conteste antes: si no,
       // en local la animación se corta a media vuelta.
@@ -52,13 +55,16 @@ export function Table() {
       setRevelada(resultado.card)
       await Promise.all([sincronizar(), refresh()])
     } catch (err) {
-      setErrorAccion(err instanceof ApiError ? err.message : 'No pudimos robar la carta.')
+      setErrorAccion(err instanceof ApiError ? err.message : mensajeError)
       void sincronizar()
     } finally {
       setEstadoMazo('reposo')
       setRobando(false)
     }
   }
+
+  const robar = () => resolverTurno('/draw', 'No pudimos robar la carta.')
+  const jugarComodin = () => resolverTurno('/wildcard/play', 'No pudimos jugar el comodín.')
 
   /**
    * Devuelve todas las cartas jugadas al mazo. A media partida se confirma
@@ -172,6 +178,30 @@ export function Table() {
           >
             ROBAR
           </Button>
+        )}
+
+        {/* Jugarlo reemplaza el robo al azar: sale garantizado, sin importar
+            si el mazo compartido está vacío. Solo depende de tu turno.
+            Botón aparte, no el componente Button: necesita su propio color
+            (lima) y ese no se puede pisar de forma fiable desde fuera. */}
+        {!revelada && deck?.wildcard.chosen && !deck.wildcard.played && (
+          <button
+            type="button"
+            onClick={jugarComodin}
+            disabled={!miTurno || robando}
+            aria-busy={robando || undefined}
+            className="inline-flex min-h-11 w-full items-center justify-center gap-1.5 rounded-xl border border-lima/50 bg-lima/10 px-5 font-display text-base font-semibold text-lima transition-colors duration-200 hover:bg-lima/15 disabled:pointer-events-none disabled:border-borde disabled:bg-superficie-alta disabled:text-tinta-suave/70"
+          >
+            {robando ? (
+              <span
+                className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent"
+                aria-hidden="true"
+              />
+            ) : (
+              <IconoComodin className="size-5" aria-hidden="true" />
+            )}
+            Jugar comodín: {deck.wildcard.card?.title}
+          </button>
         )}
 
         {/* El botón deshabilitado nunca se queda mudo: siempre dice por qué. */}

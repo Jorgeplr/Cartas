@@ -161,4 +161,47 @@ RSpec.describe "Cards" do
       expect(pairing.playable_cards).to include(ajena)
     end
   end
+
+  describe "is_my_wildcard" do
+    it "marca la carta elegida como comodin" do
+      mia = carta(author: ana)
+      Wildcard.create!(chosen_by: ana, card: mia)
+
+      get "/api/cards", headers: auth_headers(ana)
+
+      expect(json[:cards].first[:is_my_wildcard]).to be(true)
+    end
+
+    it "nunca aparece en cartas ajenas, aunque las tenga elegidas la otra persona" do
+      suya = carta(author: bea)
+      Wildcard.create!(chosen_by: bea, card: suya)
+
+      get "/api/cards", headers: auth_headers(ana)
+
+      expect(json[:cards].first[:is_my_wildcard]).to be(false)
+    end
+
+    it "se queda marcada aunque ya se haya jugado: es como el frontend sabe que este comodin ya se gasto" do
+      mia = carta(author: ana)
+      wildcard = Wildcard.create!(chosen_by: ana, card: mia)
+      mia.update!(drawn_at: Time.current, drawn_by: ana)
+      wildcard.update!(played_at: Time.current)
+
+      get "/api/cards", headers: auth_headers(ana)
+
+      expect(json[:cards].first[:is_my_wildcard]).to be(true)
+    end
+
+    it "el elegido antes deja de marcarse al elegir uno nuevo" do
+      primera = carta(author: ana, title: "Primera")
+      segunda = carta(author: ana, title: "Segunda")
+      Wildcard.create!(chosen_by: ana, card: primera)
+      post "/api/wildcard", params: { card_id: segunda.id }, headers: auth_headers(ana)
+
+      get "/api/cards", headers: auth_headers(ana)
+
+      marcada = json[:cards].find { |c| c[:is_my_wildcard] }
+      expect(marcada[:id]).to eq(segunda.id)
+    end
+  end
 end

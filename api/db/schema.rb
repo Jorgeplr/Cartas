@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_19_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_19_150000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -75,6 +75,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_19_120000) do
     t.index ["invite_code"], name: "index_users_on_invite_code", unique: true
   end
 
+  create_table "wildcards", force: :cascade do |t|
+    t.bigint "card_id", null: false
+    t.bigint "chosen_by_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "played_at"
+    t.datetime "updated_at", null: false
+    t.index ["card_id"], name: "index_wildcards_on_card_id"
+    t.index ["chosen_by_id"], name: "index_wildcards_on_chosen_by_id"
+    t.index ["chosen_by_id"], name: "index_wildcards_on_chosen_by_id_active", unique: true, where: "(played_at IS NULL)"
+  end
+
   add_foreign_key "card_bans", "cards"
   add_foreign_key "card_bans", "users", column: "banned_by_id"
   add_foreign_key "cards", "users", column: "author_id"
@@ -84,4 +95,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_19_120000) do
   add_foreign_key "pairings", "users", column: "user_b_id"
   add_foreign_key "rps_rounds", "pairings"
   add_foreign_key "rps_rounds", "users", column: "winner_id"
+  add_foreign_key "wildcards", "cards"
+  add_foreign_key "wildcards", "users", column: "chosen_by_id"
 end

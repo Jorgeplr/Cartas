@@ -93,6 +93,15 @@ RSpec.describe "Pairings" do
       expect(CardBan.count).to eq(0)
     end
 
+    it "borra tambien el comodin elegido" do
+      mia = Card.create!(author: ana, title: "Mia", challenge: "Reto", theme: "picante")
+      Wildcard.create!(chosen_by: ana, card: mia)
+
+      delete "/api/pairing", headers: auth_headers(ana)
+
+      expect(Wildcard.count).to eq(0)
+    end
+
     it "da 404 si ya no tienes pareja" do
       pairing.destroy!
 

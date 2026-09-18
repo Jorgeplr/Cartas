@@ -142,6 +142,16 @@ export function IconoLlama(props: IconProps) {
   )
 }
 
+/** El destello del comodín: a propósito distinto de la estrella de 5 puntas
+ *  que ya usa la temática "atrevida", para no confundir ambos glifos. */
+export function IconoComodin(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M12 3c.6 3.4 2.6 5.4 6 6-3.4.6-5.4 2.6-6 6-.6-3.4-2.6-5.4-6-6 3.4-.6 5.4-2.6 6-6Z" />
+    </Svg>
+  )
+}
+
 export function IconoPiedra(props: IconProps) {
   return (
     <Svg {...props}>

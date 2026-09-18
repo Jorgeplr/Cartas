@@ -11,17 +11,31 @@ import { CardEditor } from './CardEditor'
 
 export function Cards() {
   const { session } = useAuth()
-  const { mias, suyas, baneosUsados, cargando, error, guardar, borrar, banear, desbanear } =
-    useCards()
+  const {
+    mias,
+    suyas,
+    baneosUsados,
+    comodin,
+    comodinJugado,
+    cargando,
+    error,
+    guardar,
+    borrar,
+    banear,
+    desbanear,
+    elegirComodin,
+    cancelarComodin,
+  } = useCards()
   const [editor, setEditor] = useState<{ carta?: Card } | null>(null)
   const [abierta, setAbierta] = useState<Card | null>(null)
 
   const nombrePareja = session?.partner?.display_name ?? 'tu pareja'
   const quedanBaneos = MAXIMO_BANEOS - baneosUsados
 
-  // El diálogo de carta completa se queda abierto al banear/desbanear, así
-  // que su copia de la carta hay que refrescarla a mano: `abierta` es un
-  // snapshot tomado al abrirlo, no una vista en vivo de `cards`.
+  // El diálogo de carta completa se queda abierto al banear/desbanear o al
+  // elegir/cancelar comodín, así que su copia de la carta hay que
+  // refrescarla a mano: `abierta` es un snapshot tomado al abrirlo, no una
+  // vista en vivo de `cards`.
   async function alBanear(carta: Card) {
     const actualizada = await banear(carta)
     if (actualizada) setAbierta(actualizada)
@@ -29,6 +43,16 @@ export function Cards() {
 
   async function alDesbanear(carta: Card) {
     const actualizada = await desbanear(carta)
+    if (actualizada) setAbierta(actualizada)
+  }
+
+  async function alElegirComodin(carta: Card) {
+    const actualizada = await elegirComodin(carta)
+    if (actualizada) setAbierta(actualizada)
+  }
+
+  async function alCancelarComodin(carta: Card) {
+    const actualizada = await cancelarComodin(carta)
     if (actualizada) setAbierta(actualizada)
   }
 
@@ -100,7 +124,20 @@ export function Cards() {
         <div className="flex flex-col gap-10">
           <Seccion
             titulo={`Tus cartas (${mias.length})`}
-            extra={<ResumenTematicas cards={mias} />}
+            extra={
+              <div className="flex flex-wrap items-center gap-4">
+                {comodin && (
+                  <p className="text-sm text-tinta-suave">
+                    Comodín:{' '}
+                    <span className="font-semibold text-lima">
+                      {comodin.title}
+                      {comodinJugado ? ' · jugado' : ''}
+                    </span>
+                  </p>
+                )}
+                <ResumenTematicas cards={mias} />
+              </div>
+            }
           >
             {mias.length === 0 ? (
               <EmptyDeck
@@ -117,6 +154,9 @@ export function Cards() {
                     onOpen={setAbierta}
                     onEdit={(c) => setEditor({ carta: c })}
                     onDelete={borrar}
+                    onSetWildcard={elegirComodin}
+                    onClearWildcard={cancelarComodin}
+                    comodinJugado={comodinJugado}
                   />
                 ))}
               </CardGrid>
@@ -171,6 +211,9 @@ export function Cards() {
             onBan={alBanear}
             onUnban={alDesbanear}
             quedanBaneos={quedanBaneos}
+            onSetWildcard={alElegirComodin}
+            onClearWildcard={alCancelarComodin}
+            comodinJugado={comodinJugado}
           />
         )}
       </AnimatePresence>

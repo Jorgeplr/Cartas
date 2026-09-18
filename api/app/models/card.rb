@@ -5,6 +5,7 @@ class Card < ApplicationRecord
   belongs_to :author, class_name: "User"
   belongs_to :drawn_by, class_name: "User", optional: true
   has_many :card_bans, dependent: :destroy
+  has_many :wildcards, dependent: :destroy
 
   validates :title, presence: true, length: { maximum: 60 }
   validates :challenge, presence: true, length: { maximum: 280 }
