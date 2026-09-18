@@ -82,3 +82,19 @@ export interface DrawResult {
   cards_left: number
   current_turn_user_id: number
 }
+
+export type RpsChoice = 'piedra' | 'papel' | 'tijera'
+
+export const ELECCIONES_RPS: RpsChoice[] = ['piedra', 'papel', 'tijera']
+
+export interface RpsRoundState {
+  resolved: boolean
+  /** Tu propia elección: siempre visible, incluso antes de resolver. */
+  my_choice: RpsChoice | null
+  /** Si la otra persona ya eligió, sin decir qué. */
+  partner_chose: boolean
+  /** null hasta que la ronda se resuelve: es la elección ajena, oculta hasta entonces. */
+  partner_choice: RpsChoice | null
+  result: 'gane' | 'perdi' | 'empate' | null
+  resolved_at: string | null
+}

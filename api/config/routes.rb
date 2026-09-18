@@ -15,5 +15,8 @@ Rails.application.routes.draw do
 
     post "draw",           to: "game#draw"
     post "deck/reshuffle", to: "game#reshuffle"
+
+    get  "rps",        to: "rps#show"
+    post "rps/choose", to: "rps#choose"
   end
 end
