@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from './auth/AuthContext'
 import { RequireAnon, RequireNoPairing, RequirePairing } from './auth/guards'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { IconoSalir } from './components/Icon'
+import { ParejaMenu } from './components/ParejaMenu'
 import { AuthPage } from './pages/Login'
 import { Cards } from './pages/Cards'
 import { Pair } from './pages/Pair'
@@ -37,6 +38,10 @@ function Layout() {
           <NavLink to="/rps" className={enlace} aria-label="Piedra, papel o tijera">
             PPT
           </NavLink>
+
+          <div className="ml-1 h-6 w-px bg-borde" aria-hidden="true" />
+
+          <ParejaMenu />
 
           <button
             onClick={logout}

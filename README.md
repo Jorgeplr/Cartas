@@ -38,8 +38,8 @@ aplican solas con cada `docker compose up`. No hay paso manual.
 ## Tests
 
 ```bash
-docker compose run --rm -e RAILS_ENV=test api bundle exec rspec   # 47 ejemplos
-docker compose run --rm web npx vitest run                        # 53 tests
+docker compose run --rm -e RAILS_ENV=test api bundle exec rspec   # 52 ejemplos
+docker compose run --rm web npx vitest run                        # 58 tests
 docker compose run --rm web npx tsc -b --noEmit                   # typecheck
 ```
 
@@ -54,6 +54,7 @@ Todo bajo `/api`, JSON, con `Authorization: Bearer <jwt>` salvo signup y login.
 | GET | `/me` | Usuario, pareja y turno actual |
 | GET | `/pairing` | Estado de la baraja y cartas restantes |
 | POST | `/pairing/join` | Empareja usando un código de invitación |
+| DELETE | `/pairing` | Termina el emparejamiento (las cartas de cada quien se conservan) |
 | GET | `/cards` | La baraja, con los retos ajenos ocultos |
 | POST | `/cards` | Crea una carta |
 | PATCH | `/cards/:id` | Edita una carta propia no robada |

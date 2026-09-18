@@ -159,6 +159,23 @@ export function IconoPapel(props: IconProps) {
   )
 }
 
+export function IconoChevronAbajo(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="m6 9 6 6 6-6" />
+    </Svg>
+  )
+}
+
+export function IconoCorazonRoto(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M12 20s-7-4.35-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 5c-2.5 4.65-9.5 9-9.5 9Z" />
+      <path d="m12.5 6.5-2.5 4.5 3 2-1.5 4.5" />
+    </Svg>
+  )
+}
+
 export function IconoTijera(props: IconProps) {
   return (
     <Svg {...props}>

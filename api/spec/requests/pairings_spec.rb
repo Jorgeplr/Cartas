@@ -50,4 +50,47 @@ RSpec.describe "Pairings" do
     expect(json[:error][:code]).to eq("already_paired")
     expect(Pairing.count).to eq(1)
   end
+
+  describe "DELETE /api/pairing" do
+    let!(:pairing) { Pairing.create!(user_a: ana, user_b: bea, current_turn_user: ana) }
+
+    it "termina el emparejamiento" do
+      delete "/api/pairing", headers: auth_headers(ana)
+
+      expect(response).to have_http_status(:no_content)
+      expect(Pairing.count).to eq(0)
+    end
+
+    it "cualquiera de los dos puede terminarlo, no solo quien lo pidio" do
+      delete "/api/pairing", headers: auth_headers(bea)
+
+      expect(response).to have_http_status(:no_content)
+      expect(ana.reload.pairing).to be_nil
+    end
+
+    it "las cartas de cada quien sobreviven" do
+      Card.create!(author: ana, title: "Suya", challenge: "Reto", theme: "picante")
+
+      delete "/api/pairing", headers: auth_headers(ana)
+
+      expect(ana.cards.count).to eq(1)
+    end
+
+    it "borra tambien las rondas de piedra, papel o tijera de la pareja" do
+      RpsRound.create!(pairing: pairing)
+
+      delete "/api/pairing", headers: auth_headers(ana)
+
+      expect(RpsRound.count).to eq(0)
+    end
+
+    it "da 404 si ya no tienes pareja" do
+      pairing.destroy!
+
+      delete "/api/pairing", headers: auth_headers(ana)
+
+      expect(response).to have_http_status(:not_found)
+      expect(json[:error][:code]).to eq("no_pairing")
+    end
+  end
 end

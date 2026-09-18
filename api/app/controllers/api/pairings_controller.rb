@@ -28,6 +28,19 @@ module Api
       render json: PairingSerializer.call(pairing, current_user)
     end
 
+    # Termina el emparejamiento. Cualquiera de los dos puede hacerlo, sin que
+    # el otro tenga que confirmar: es una salida de emergencia, no una
+    # negociacion. Las cartas de cada quien se quedan a su nombre -si alguno
+    # se empareja de nuevo, entraran solas a la baraja de la nueva pareja,
+    # igual que ya pasa con las escritas antes de emparejarse la primera vez.
+    def destroy
+      pairing = current_user.pairing
+      return render_error(:not_found, "no_pairing", "Aun no tienes pareja") unless pairing
+
+      pairing.destroy!
+      head :no_content
+    end
+
     def join
       code = params[:code].to_s.strip.upcase
       other = User.find_by(invite_code: code)
