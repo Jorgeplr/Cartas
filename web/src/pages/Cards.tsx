@@ -6,16 +6,31 @@ import { CardDialog } from '../components/CardDialog'
 import { CardGrid, CardTile, EmptyDeck, ResumenTematicas } from '../components/CardGrid'
 import { IconoCerrar, IconoMas } from '../components/Icon'
 import { useCards } from '../lib/useCards'
-import type { Card } from '../lib/types'
+import { MAXIMO_BANEOS, type Card } from '../lib/types'
 import { CardEditor } from './CardEditor'
 
 export function Cards() {
   const { session } = useAuth()
-  const { mias, suyas, cargando, error, guardar, borrar } = useCards()
+  const { mias, suyas, baneosUsados, cargando, error, guardar, borrar, banear, desbanear } =
+    useCards()
   const [editor, setEditor] = useState<{ carta?: Card } | null>(null)
   const [abierta, setAbierta] = useState<Card | null>(null)
 
   const nombrePareja = session?.partner?.display_name ?? 'tu pareja'
+  const quedanBaneos = MAXIMO_BANEOS - baneosUsados
+
+  // El diálogo de carta completa se queda abierto al banear/desbanear, así
+  // que su copia de la carta hay que refrescarla a mano: `abierta` es un
+  // snapshot tomado al abrirlo, no una vista en vivo de `cards`.
+  async function alBanear(carta: Card) {
+    const actualizada = await banear(carta)
+    if (actualizada) setAbierta(actualizada)
+  }
+
+  async function alDesbanear(carta: Card) {
+    const actualizada = await desbanear(carta)
+    if (actualizada) setAbierta(actualizada)
+  }
 
   return (
     <div className="mx-auto w-full max-w-5xl px-5 py-8">
@@ -108,13 +123,31 @@ export function Cards() {
             )}
           </Seccion>
 
-          <Seccion titulo={`Las de ${nombrePareja} (${suyas.length})`}>
+          <Seccion
+            titulo={`Las de ${nombrePareja} (${suyas.length})`}
+            extra={
+              suyas.length > 0 && (
+                <p className="text-sm text-tinta-suave">
+                  <span className="font-semibold text-tinta">{baneosUsados}/{MAXIMO_BANEOS}</span>{' '}
+                  baneos usados
+                </p>
+              )
+            }
+          >
             {suyas.length === 0 ? (
               <EmptyDeck mensaje={`${nombrePareja} aún no ha escrito ninguna carta.`} />
             ) : (
               <CardGrid>
                 {suyas.map((carta, i) => (
-                  <CardTile key={carta.id} carta={carta} indice={i} onOpen={setAbierta} />
+                  <CardTile
+                    key={carta.id}
+                    carta={carta}
+                    indice={i}
+                    onOpen={setAbierta}
+                    onBan={banear}
+                    onUnban={desbanear}
+                    quedanBaneos={quedanBaneos}
+                  />
                 ))}
               </CardGrid>
             )}
@@ -135,6 +168,9 @@ export function Cards() {
               setAbierta(null)
               void borrar(c)
             }}
+            onBan={alBanear}
+            onUnban={alDesbanear}
+            quedanBaneos={quedanBaneos}
           />
         )}
       </AnimatePresence>

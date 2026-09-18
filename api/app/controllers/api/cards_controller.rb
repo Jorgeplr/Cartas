@@ -22,6 +22,26 @@ module Api
       head :no_content
     end
 
+    # Vetar hasta 4 cartas ajenas para que no salgan en la baraja. El limite y
+    # que la carta siga en el mazo se validan en el modelo, no aqui: es la
+    # misma regla la use quien la use.
+    def ban
+      card = carta_ajena
+      ban = current_user.card_bans.new(card: card)
+
+      if ban.save
+        render json: { card: CardSerializer.call(card, current_user) }
+      else
+        render_error(:unprocessable_entity, "cannot_ban", ban.errors.full_messages.to_sentence)
+      end
+    end
+
+    def unban
+      card = carta_ajena
+      current_user.card_bans.where(card: card).destroy_all
+      render json: { card: CardSerializer.call(card, current_user) }
+    end
+
     private
 
     # Sin pareja solo existen tus cartas; con pareja, la baraja de ambos.
@@ -36,6 +56,15 @@ module Api
       # el mazo se rebaraja y se vuelve a jugar, asi que corregir una errata
       # o subir el tono de un reto sigue teniendo sentido despues.
       raise Forbidden, "not_your_card" unless card.author_id == current_user.id
+
+      card
+    end
+
+    # Lo opuesto a editable_card: solo tiene sentido banear lo que escribio
+    # la otra persona, nunca lo tuyo.
+    def carta_ajena
+      card = mazo.find(params[:id])
+      raise Forbidden, "own_card" if card.author_id == current_user.id
 
       card
     end

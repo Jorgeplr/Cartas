@@ -38,8 +38,13 @@ export interface Card {
   hidden: boolean
   /** null cuando `hidden` es true */
   challenge: string | null
+  /** true si TÚ baneaste esta carta ajena. Nunca dice si la baneó la otra persona: eso es secreto. */
+  banned_by_me: boolean
   created_at: string
 }
+
+/** Cuántas cartas ajenas puedes banear antes de rebarajar o terminar la pareja. */
+export const MAXIMO_BANEOS = 4
 
 export interface Pairing {
   id: number

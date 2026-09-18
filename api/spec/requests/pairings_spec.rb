@@ -84,6 +84,15 @@ RSpec.describe "Pairings" do
       expect(RpsRound.count).to eq(0)
     end
 
+    it "borra tambien los baneos entre los dos" do
+      suya = Card.create!(author: bea, title: "Suya", challenge: "Reto", theme: "picante")
+      CardBan.create!(banned_by: ana, card: suya)
+
+      delete "/api/pairing", headers: auth_headers(ana)
+
+      expect(CardBan.count).to eq(0)
+    end
+
     it "da 404 si ya no tienes pareja" do
       pairing.destroy!
 

@@ -20,8 +20,12 @@ class Pairing < ApplicationRecord
   # porque lo necesitan tanto robar como los recuentos de la mesa: si cada uno
   # se acordara de filtrar por su cuenta, antes o despues uno se olvidaria y
   # saldria una carta de una tematica apagada.
+  #
+  # Los baneos se restan igual que el filtro de tematicas: son otra forma de
+  # decir "esto no puede salir ahora", asi que cuentan para los dos mismos
+  # sitios y con la misma regla.
   def playable_cards
-    cards.where(theme: active_themes)
+    cards.where(theme: active_themes).where.not(id: CardBan.where(banned_by_id: [user_a_id, user_b_id]).select(:card_id))
   end
 
   def other_than(user)
@@ -30,6 +34,13 @@ class Pairing < ApplicationRecord
 
   def turn_of?(user)
     current_turn_user_id == user.id
+  end
+
+  # Cada rebarajada es una partida nueva: ambos recuperan sus 4 baneos.
+  # Tambien se llama al terminar el emparejamiento, para que no sobrevivan
+  # a una pareja distinta si estas dos personas vuelven a emparejarse.
+  def clear_bans!
+    CardBan.where(banned_by_id: [user_a_id, user_b_id]).delete_all
   end
 
   private

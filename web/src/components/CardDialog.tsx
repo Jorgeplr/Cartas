@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef } from 'react'
 import { motion } from 'framer-motion'
-import { IconoCerrar, IconoLapiz, IconoPapelera } from './Icon'
+import { IconoCerrar, IconoLapiz, IconoPapelera, IconoProhibido } from './Icon'
 import { PlayCard } from './PlayCard'
 import { ETIQUETA_TEMA, type Card } from '../lib/types'
 
@@ -9,6 +9,9 @@ interface Props {
   onClose: () => void
   onEdit?: (carta: Card) => void
   onDelete?: (carta: Card) => void
+  onBan?: (carta: Card) => void
+  onUnban?: (carta: Card) => void
+  quedanBaneos?: number
 }
 
 /**
@@ -16,7 +19,7 @@ interface Props {
  * la rejilla, y funciona con cualquier carta: las ya jugadas no tienen botones
  * de editar, así que sin esto no habia forma de leerlas.
  */
-export function CardDialog({ carta, onClose, onEdit, onDelete }: Props) {
+export function CardDialog({ carta, onClose, onEdit, onDelete, onBan, onUnban, quedanBaneos }: Props) {
   const tituloId = useId()
   const cerrarRef = useRef<HTMLButtonElement>(null)
 
@@ -34,6 +37,7 @@ export function CardDialog({ carta, onClose, onEdit, onDelete }: Props) {
   // Tus cartas se editan siempre, tambien las ya jugadas: el mazo se rebaraja
   // y se vuelve a jugar, asi que una errata o un reto flojo siguen importando.
   const editable = carta.mine
+  const baneable = !carta.mine && !carta.drawn && (onBan || onUnban)
 
   return (
     <motion.div
@@ -107,6 +111,32 @@ export function CardDialog({ carta, onClose, onEdit, onDelete }: Props) {
                 className="grid size-11 place-items-center rounded-lg border border-borde text-tinta-suave transition-colors duration-200 hover:border-error/60 hover:text-error"
               >
                 <IconoPapelera className="size-4" aria-hidden="true" />
+              </button>
+            )}
+          </div>
+        )}
+
+        {baneable && (
+          <div className="mt-3">
+            {carta.banned_by_me ? (
+              <button
+                type="button"
+                onClick={() => onUnban?.(carta)}
+                className="inline-flex min-h-11 w-full items-center justify-center gap-1.5 rounded-lg border border-error/50 bg-error/10 text-sm font-bold text-error transition-colors duration-200 hover:bg-error/15"
+              >
+                <IconoProhibido className="size-4" aria-hidden="true" />
+                Baneada · quitar
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => onBan?.(carta)}
+                disabled={quedanBaneos === 0}
+                title={quedanBaneos === 0 ? 'Ya usaste tus 4 baneos' : undefined}
+                className="inline-flex min-h-11 w-full items-center justify-center gap-1.5 rounded-lg border border-borde text-sm font-bold text-tinta-suave transition-colors duration-200 hover:border-error/60 hover:text-error disabled:pointer-events-none disabled:opacity-50"
+              >
+                <IconoProhibido className="size-4" aria-hidden="true" />
+                Banear{quedanBaneos != null && ` (te quedan ${quedanBaneos})`}
               </button>
             )}
           </div>

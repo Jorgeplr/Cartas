@@ -17,6 +17,7 @@ function carta(overrides: Partial<Card> = {}): Card {
     mine: true,
     drawn: false,
     hidden: false,
+    banned_by_me: false,
     created_at: '2026-08-30T00:00:00Z',
     ...overrides,
   }
@@ -69,5 +70,64 @@ describe('CardDialog', () => {
       <CardDialog carta={carta({ mine: false })} onClose={vi.fn()} onEdit={vi.fn()} />,
     )
     expect(screen.queryByRole('button', { name: /editar/i })).not.toBeInTheDocument()
+  })
+
+  it('ofrece banear una carta ajena que sigue en el mazo', async () => {
+    const onBan = vi.fn()
+    render(
+      <CardDialog
+        carta={carta({ mine: false })}
+        onClose={vi.fn()}
+        onBan={onBan}
+        quedanBaneos={4}
+      />,
+    )
+
+    const boton = screen.getByRole('button', { name: /banear/i })
+    await userEvent.click(boton)
+    expect(onBan).toHaveBeenCalledWith(carta({ mine: false }))
+  })
+
+  it('deja quitar el baneo de una carta ya baneada', async () => {
+    const onUnban = vi.fn()
+    render(
+      <CardDialog
+        carta={carta({ mine: false, banned_by_me: true })}
+        onClose={vi.fn()}
+        onUnban={onUnban}
+      />,
+    )
+
+    await userEvent.click(screen.getByRole('button', { name: /baneada/i }))
+    expect(onUnban).toHaveBeenCalled()
+  })
+
+  it('deshabilita banear cuando ya no quedan baneos', () => {
+    render(
+      <CardDialog
+        carta={carta({ mine: false })}
+        onClose={vi.fn()}
+        onBan={vi.fn()}
+        quedanBaneos={0}
+      />,
+    )
+
+    expect(screen.getByRole('button', { name: /banear/i })).toBeDisabled()
+  })
+
+  it('no ofrece banear ni tus propias cartas ni las ya jugadas', () => {
+    const { rerender } = render(
+      <CardDialog carta={carta({ mine: true })} onClose={vi.fn()} onBan={vi.fn()} />,
+    )
+    expect(screen.queryByRole('button', { name: /banear/i })).not.toBeInTheDocument()
+
+    rerender(
+      <CardDialog
+        carta={carta({ mine: false, drawn: true })}
+        onClose={vi.fn()}
+        onBan={vi.fn()}
+      />,
+    )
+    expect(screen.queryByRole('button', { name: /banear/i })).not.toBeInTheDocument()
   })
 })

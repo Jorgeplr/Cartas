@@ -176,6 +176,15 @@ export function IconoCorazonRoto(props: IconProps) {
   )
 }
 
+export function IconoProhibido(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <circle cx="12" cy="12" r="9" />
+      <path d="m5.5 5.5 13 13" />
+    </Svg>
+  )
+}
+
 export function IconoTijera(props: IconProps) {
   return (
     <Svg {...props}>

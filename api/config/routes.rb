@@ -13,6 +13,8 @@ Rails.application.routes.draw do
     delete "pairing",        to: "pairings#destroy"
 
     resources :cards, only: [:index, :create, :update, :destroy]
+    post   "cards/:id/ban", to: "cards#ban"
+    delete "cards/:id/ban", to: "cards#unban"
 
     post "draw",           to: "game#draw"
     post "deck/reshuffle", to: "game#reshuffle"

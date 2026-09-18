@@ -74,6 +74,7 @@ describe('CardEditor', () => {
           mine: true,
           drawn: false,
           hidden: false,
+          banned_by_me: false,
           created_at: '2026-08-29T00:00:00Z',
         }}
         onSave={vi.fn()}

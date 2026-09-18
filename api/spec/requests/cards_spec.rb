@@ -101,4 +101,64 @@ RSpec.describe "Cards" do
     expect(json[:cards].size).to eq(1)
     expect(json[:cards].first[:title]).to eq("Mia")
   end
+
+  describe "baneos" do
+    it "banea una carta ajena y ya no sale en el mazo jugable" do
+      ajena = carta(author: bea)
+
+      post "/api/cards/#{ajena.id}/ban", headers: auth_headers(ana)
+
+      expect(response).to have_http_status(:ok)
+      expect(json[:card][:banned_by_me]).to be(true)
+      expect(pairing.playable_cards).not_to include(ajena)
+    end
+
+    it "no revela el baneo a la otra persona" do
+      ajena = carta(author: bea)
+      post "/api/cards/#{ajena.id}/ban", headers: auth_headers(ana)
+
+      get "/api/cards", headers: auth_headers(bea)
+
+      expect(json[:cards].first[:banned_by_me]).to be(false)
+    end
+
+    it "rechaza banear tu propia carta" do
+      mia = carta(author: ana)
+
+      post "/api/cards/#{mia.id}/ban", headers: auth_headers(ana)
+
+      expect(response).to have_http_status(:forbidden)
+      expect(json[:error][:code]).to eq("own_card")
+    end
+
+    it "rechaza banear una carta ya jugada" do
+      ajena = carta(author: bea, drawn_at: Time.current)
+
+      post "/api/cards/#{ajena.id}/ban", headers: auth_headers(ana)
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(CardBan.count).to eq(0)
+    end
+
+    it "no deja banear una quinta carta" do
+      4.times { |i| post "/api/cards/#{carta(author: bea, title: "C#{i}").id}/ban", headers: auth_headers(ana) }
+      quinta = carta(author: bea, title: "C5")
+
+      post "/api/cards/#{quinta.id}/ban", headers: auth_headers(ana)
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(CardBan.where(banned_by_id: ana.id).count).to eq(4)
+    end
+
+    it "desbanea una carta y vuelve a estar disponible" do
+      ajena = carta(author: bea)
+      post "/api/cards/#{ajena.id}/ban", headers: auth_headers(ana)
+
+      delete "/api/cards/#{ajena.id}/ban", headers: auth_headers(ana)
+
+      expect(response).to have_http_status(:ok)
+      expect(json[:card][:banned_by_me]).to be(false)
+      expect(pairing.playable_cards).to include(ajena)
+    end
+  end
 end

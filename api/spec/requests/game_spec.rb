@@ -103,4 +103,23 @@ RSpec.describe "Game" do
     expect(Card.where.not(drawn_at: nil)).to be_empty
     expect(Card.where.not(drawn_by_id: nil)).to be_empty
   end
+
+  it "una carta baneada no puede salir al robar" do
+    llenar_mazo(1)
+    CardBan.create!(banned_by: ana, card: Card.first)
+
+    post "/api/draw", headers: auth_headers(ana)
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(json[:error][:code]).to eq("no_playable_cards")
+  end
+
+  it "rebarajar reinicia tambien los baneos de la partida" do
+    llenar_mazo(1)
+    CardBan.create!(banned_by: ana, card: Card.first)
+
+    post "/api/deck/reshuffle", headers: auth_headers(ana)
+
+    expect(CardBan.count).to eq(0)
+  end
 end

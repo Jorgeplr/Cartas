@@ -37,6 +37,7 @@ module Api
       pairing = current_user.pairing
       return render_error(:not_found, "no_pairing", "Aun no tienes pareja") unless pairing
 
+      pairing.clear_bans!
       pairing.destroy!
       head :no_content
     end

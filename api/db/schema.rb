@@ -10,10 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_18_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_19_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "card_bans", force: :cascade do |t|
+    t.bigint "banned_by_id", null: false
+    t.bigint "card_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["banned_by_id", "card_id"], name: "index_card_bans_on_banned_by_id_and_card_id", unique: true
+    t.index ["banned_by_id"], name: "index_card_bans_on_banned_by_id"
+    t.index ["card_id"], name: "index_card_bans_on_card_id"
+  end
 
   create_table "cards", force: :cascade do |t|
     t.bigint "author_id", null: false
@@ -65,6 +75,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_120000) do
     t.index ["invite_code"], name: "index_users_on_invite_code", unique: true
   end
 
+  add_foreign_key "card_bans", "cards"
+  add_foreign_key "card_bans", "users", column: "banned_by_id"
   add_foreign_key "cards", "users", column: "author_id"
   add_foreign_key "cards", "users", column: "drawn_by_id"
   add_foreign_key "pairings", "users", column: "current_turn_user_id"

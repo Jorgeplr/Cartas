@@ -68,15 +68,49 @@ export function useCards() {
     [cargar],
   )
 
+  // Devuelven la carta actualizada (o undefined si falla): quien la banea
+  // desde el diálogo de carta completa, y no solo desde la rejilla, necesita
+  // ese valor para refrescar lo que está mostrando ahí sin cerrarlo.
+  const banear = useCallback(async (carta: Card) => {
+    setError(null)
+
+    try {
+      const { card } = await api.post<{ card: Card }>(`/cards/${carta.id}/ban`)
+      setCards((prev) => prev.map((c) => (c.id === card.id ? card : c)))
+      return card
+    } catch (err) {
+      setError(mensaje(err, 'No pudimos banear la carta.'))
+      return undefined
+    }
+  }, [])
+
+  const desbanear = useCallback(async (carta: Card) => {
+    setError(null)
+
+    try {
+      const { card } = await api.del<{ card: Card }>(`/cards/${carta.id}/ban`)
+      setCards((prev) => prev.map((c) => (c.id === card.id ? card : c)))
+      return card
+    } catch (err) {
+      setError(mensaje(err, 'No pudimos quitar el baneo.'))
+      return undefined
+    }
+  }, [])
+
+  const suyas = cards.filter((c) => !c.mine)
+
   return {
     cards,
     mias: cards.filter((c) => c.mine),
-    suyas: cards.filter((c) => !c.mine),
+    suyas,
+    baneosUsados: suyas.filter((c) => c.banned_by_me).length,
     cargando,
     error,
     recargar: cargar,
     guardar,
     borrar,
+    banear,
+    desbanear,
   }
 }
 
