@@ -31,12 +31,15 @@ aplican solas con cada `docker compose up`. No hay paso manual.
 4. En **Mesa**, se roba por turnos. Sale una carta al azar y la cumple quien la
    robó. **Reiniciar mazo** devuelve todas las jugadas cuando queráis, no solo
    al agotarse la baraja.
+5. En **PPT**, si no os queréis complicar, echáis un piedra, papel o tijera:
+   cada quien elige desde su propio dispositivo, sin ver la jugada ajena hasta
+   que ambos han elegido.
 
 ## Tests
 
 ```bash
-docker compose run --rm -e RAILS_ENV=test api bundle exec rspec   # 31 ejemplos
-docker compose run --rm web npx vitest run                        # 15 tests
+docker compose run --rm -e RAILS_ENV=test api bundle exec rspec   # 47 ejemplos
+docker compose run --rm web npx vitest run                        # 53 tests
 docker compose run --rm web npx tsc -b --noEmit                   # typecheck
 ```
 
@@ -57,6 +60,8 @@ Todo bajo `/api`, JSON, con `Authorization: Bearer <jwt>` salvo signup y login.
 | DELETE | `/cards/:id` | Borra una carta propia no robada |
 | POST | `/draw` | Roba al azar, marca la carta y pasa el turno |
 | POST | `/deck/reshuffle` | Devuelve todas las cartas al mazo |
+| GET | `/rps` | Estado de la ronda de piedra, papel o tijera |
+| POST | `/rps/choose` | Elige piedra, papel o tijera para la ronda actual |
 
 Los errores siempre tienen la misma forma:
 

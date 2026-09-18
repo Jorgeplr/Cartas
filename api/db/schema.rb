@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_13_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_18_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -41,6 +41,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_13_120000) do
     t.index ["user_b_id"], name: "index_pairings_on_user_b_id", unique: true
   end
 
+  create_table "rps_rounds", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "pairing_id", null: false
+    t.datetime "resolved_at"
+    t.datetime "updated_at", null: false
+    t.string "user_a_choice"
+    t.string "user_b_choice"
+    t.bigint "winner_id"
+    t.index ["pairing_id"], name: "index_rps_rounds_on_pairing_id"
+    t.index ["pairing_id"], name: "index_rps_rounds_on_pairing_id_active", unique: true, where: "(resolved_at IS NULL)"
+    t.index ["winner_id"], name: "index_rps_rounds_on_winner_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "display_name", null: false
@@ -57,4 +70,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_13_120000) do
   add_foreign_key "pairings", "users", column: "current_turn_user_id"
   add_foreign_key "pairings", "users", column: "user_a_id"
   add_foreign_key "pairings", "users", column: "user_b_id"
+  add_foreign_key "rps_rounds", "pairings"
+  add_foreign_key "rps_rounds", "users", column: "winner_id"
 end

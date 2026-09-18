@@ -3,6 +3,8 @@ class Pairing < ApplicationRecord
   belongs_to :user_b, class_name: "User"
   belongs_to :current_turn_user, class_name: "User"
 
+  has_many :rps_rounds, dependent: :destroy
+
   validate :tematicas_validas
 
   def members

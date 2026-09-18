@@ -6,6 +6,7 @@ import { IconoSalir } from './components/Icon'
 import { AuthPage } from './pages/Login'
 import { Cards } from './pages/Cards'
 import { Pair } from './pages/Pair'
+import { Rps } from './pages/Rps'
 import { Table } from './pages/Table'
 
 function Layout() {
@@ -32,6 +33,9 @@ function Layout() {
           </NavLink>
           <NavLink to="/cards" className={enlace}>
             Mazo
+          </NavLink>
+          <NavLink to="/rps" className={enlace} aria-label="Piedra, papel o tijera">
+            PPT
           </NavLink>
 
           <button
@@ -70,6 +74,7 @@ export default function App() {
               <Route element={<Layout />}>
                 <Route path="/" element={<Table />} />
                 <Route path="/cards" element={<Cards />} />
+                <Route path="/rps" element={<Rps />} />
               </Route>
             </Route>
 

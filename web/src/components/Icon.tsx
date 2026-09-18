@@ -141,3 +141,30 @@ export function IconoLlama(props: IconProps) {
     </Svg>
   )
 }
+
+export function IconoPiedra(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M12 3 5 9v6l3 6h8l3-6V9l-7-6Z" />
+    </Svg>
+  )
+}
+
+export function IconoPapel(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <rect x="6" y="3" width="12" height="18" rx="1.5" />
+      <path d="M9 9h6M9 13h6M9 17h4" />
+    </Svg>
+  )
+}
+
+export function IconoTijera(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <circle cx="6" cy="6" r="3" />
+      <circle cx="6" cy="18" r="3" />
+      <path d="M8.1 8.1 20 20M14.5 14.5 20 4M8.1 15.9 12 12" />
+    </Svg>
+  )
+}
