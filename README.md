@@ -109,6 +109,33 @@ estáticos y lo sirve nginx en el puerto 80.
 `VITE_API_URL` se incrusta en el bundle **en tiempo de build**: si despliegas la
 API en otro dominio, pásalo al construir, no al arrancar.
 
+## Si alguien olvida su contraseña
+
+No hay recuperación de autoservicio a propósito: un "pon tu correo y elige
+tu contraseña nueva" sin verificarlo primero le regala la cuenta de
+cualquiera a quien sepa su email, y aquí eso es leer las cartas privadas de
+otra persona. Como quien opera esta app conoce a sus usuarios, resetear a
+mano es más seguro que montar ese hueco.
+
+```bash
+# Desarrollo
+docker compose exec api bin/rails console
+
+# Producción
+docker compose -f docker-compose.prod.yml exec api bin/rails console
+```
+
+Dentro de la consola:
+
+```ruby
+User.find_by!(email: "correo@ejemplo.com").update!(password: "una-nueva-temporal")
+```
+
+`has_secure_password` se encarga de volver a hashearla; no hace falta tocar
+`password_digest` a mano. Avisale a la persona su contraseña temporal por
+un canal que ya uses con ella (no por la propia app, que es donde la
+perdió).
+
 ## Problemas conocidos
 
 ### `password authentication failed for user "postgres"`
