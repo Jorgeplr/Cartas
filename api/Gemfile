@@ -14,4 +14,10 @@ gem "bootsnap", require: false
 group :development, :test do
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
   gem "rspec-rails", "~> 7.1"
+
+  # Las usa bin/ci: .rubocop.yml hereda de la primera y bin/bundler-audit
+  # carga la segunda. Sin ellas el CI falla siempre, y un CI que siempre
+  # falla no avisa de nada.
+  gem "rubocop-rails-omakase", require: false
+  gem "bundler-audit", require: false
 end

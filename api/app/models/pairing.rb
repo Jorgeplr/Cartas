@@ -8,12 +8,12 @@ class Pairing < ApplicationRecord
   validate :tematicas_validas
 
   def members
-    [user_a, user_b]
+    [ user_a, user_b ]
   end
 
   # La baraja son las cartas de ambos: no hay tabla de mazos, la pareja lo es.
   def cards
-    Card.where(author_id: [user_a_id, user_b_id])
+    Card.where(author_id: [ user_a_id, user_b_id ])
   end
 
   # Lo que puede salir con el filtro puesto. Vive aqui y no en el controlador
@@ -56,7 +56,7 @@ class Pairing < ApplicationRecord
   private
 
   def miembros_ids
-    [user_a_id, user_b_id]
+    [ user_a_id, user_b_id ]
   end
 
   # Sin ninguna tematica activa el mazo quedaria vacio para siempre y nada en

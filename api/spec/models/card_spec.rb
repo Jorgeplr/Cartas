@@ -23,6 +23,6 @@ RSpec.describe Card do
     carta(drawn_at: Time.current).save!
     viva = carta(title: "Viva")
     viva.save!
-    expect(ana.cards.in_deck).to eq([viva])
+    expect(ana.cards.in_deck).to eq([ viva ])
   end
 end

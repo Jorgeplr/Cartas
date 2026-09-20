@@ -10,6 +10,6 @@ class CreateCards < ActiveRecord::Migration[8.1]
       t.timestamps
     end
 
-    add_index :cards, [:pairing_id, :drawn_at]
+    add_index :cards, [ :pairing_id, :drawn_at ]
   end
 end

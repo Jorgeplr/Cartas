@@ -12,7 +12,7 @@ Rails.application.routes.draw do
     patch  "pairing/themes", to: "pairings#update_themes"
     delete "pairing",        to: "pairings#destroy"
 
-    resources :cards, only: [:index, :create, :update, :destroy]
+    resources :cards, only: [ :index, :create, :update, :destroy ]
     post   "cards/:id/ban", to: "cards#ban"
     delete "cards/:id/ban", to: "cards#unban"
 

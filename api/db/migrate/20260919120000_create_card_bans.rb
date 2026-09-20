@@ -9,6 +9,6 @@ class CreateCardBans < ActiveRecord::Migration[8.1]
 
     # Una vez por carta y por persona: repetir el POST no debe contar dos veces
     # contra el limite de 4.
-    add_index :card_bans, [:banned_by_id, :card_id], unique: true
+    add_index :card_bans, [ :banned_by_id, :card_id ], unique: true
   end
 end
